@@ -7,7 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class BoardController {
 
     @GetMapping(value = "/")
-    public String viewList() {
+    public String showBoardList() {
         return "main";
+    }
+
+    @GetMapping(value = "/add-post")
+    public String showAddPostPage() {
+        return "addPost";
     }
 }
