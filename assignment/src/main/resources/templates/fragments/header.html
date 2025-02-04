@@ -1,5 +1,5 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <div th:fragment="header">
+    <div th:fragment="header(user)">
         <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
             <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon-stars-fill" viewBox="0 0 16 16">
@@ -10,10 +10,15 @@
                 <span class="fs-4">게시판 프로젝투~</span>
             </a>
 
-            <ul class="nav nav-pills">
-                <li class="nav-item"><a href="/add-post" class="nav-link active" aria-current="page">글쓰기</a></li>
+            <ul th:if="${user == null}" class="nav nav-pills">
                 <li class="nav-item"><a href="/login" class="nav-link">로그인</a></li>
                 <li class="nav-item"><a href="/join" class="nav-link">회원가입</a></li>
+            </ul>
+
+            <ul th:if="${user != null}" class="nav nav-pills">
+                <li class="nav-item"><a href="/posts/add" class="nav-link active" aria-current="page">글쓰기</a></li>
+                <li class="nav-item"><a href="/logout" class="nav-link">로그아웃</a></li>
+                <li class="nav-item"><a href="#" th:href="@{/users/{id}(id=user.id)}" class="nav-link"><span th:text="${user.userId}"></span> 님</a></li>
             </ul>
         </header>
     </div>
