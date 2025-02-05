@@ -1,16 +1,17 @@
 
-document.getElementById("addPostForm").addEventListener("submit", function(event) {
+document.getElementById("editPostForm").addEventListener("submit", function(event) {
            event.preventDefault();  // 기본 폼 제출 동작을 방지
 
-           const url = '/posts';  // POST 요청을 보낼 URL
+           const postId = event.target.postId.value;
+
+           const url = `/posts/${postId}`;
            const data = {
                title: event.target.title.value,
-               content: event.target.content.value,
-               username: event.target.id.value
+               content: event.target.content.value
            };
 
            fetch(url, {
-               method: 'POST',
+               method: 'PATCH',
                headers: {
                    'Content-Type': 'application/json'
                },
@@ -22,7 +23,7 @@ document.getElementById("addPostForm").addEventListener("submit", function(event
                    throw new Error('Request failed');
                }
 
-               window.location.href = '/';
+               window.location.href = url;
            })
            .catch(error => {
                console.error('Error:', error);

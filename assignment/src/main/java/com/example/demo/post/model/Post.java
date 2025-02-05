@@ -2,9 +2,11 @@ package com.example.demo.post.model;
 
 import com.example.demo.comment.model.Comment;
 import com.example.demo.user.model.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,6 +27,8 @@ public class Post {
     private String content;
 
     @CreationTimestamp
+    // DTO로 변환 후 반환 처리 필요
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

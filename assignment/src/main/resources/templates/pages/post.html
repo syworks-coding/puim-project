@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <title>게시판</title>
+    <title th:text="${post.title}">게시물 상세</title>
     <!-- Bootstrap CSS (CDN) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -11,43 +11,86 @@
     <div th:replace="~{../fragments/header :: header(user=${user})}"></div>
 
     <div class="list-group list-group-flush border-bottom mb-3">
-        <input type="hidden" value="${user.userId}" id="id">
         <div class="form-group">
-            <h1 class="h3 mb-3 fw-normal" th:text="${post.title}"></h1>
-        </div>
-        <div class="form-group mb-3">
-            <span th:text="${post.content}"></span>
+            <h1 class="h3 mb-3 fw-normal" th:text="${post.title}">게시물 제목입니다.</h1>
+            <div class="mb-3 text-end">
+                <button id="postEditButton" type="button" class="btn btn-link">수정</button>
+                <button id="postDeleteButton" type="button" class="btn btn-link">삭제</button>
+            </div>
         </div>
 
-        <button  class="btn btn-primary w-100 py-2">
-          <div class="d-flex flex-row gap-3 align-items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up" viewBox="0 0 16 16">
-              <path d="M8.864.046C7.908-.193 7.02.53 6.956 1.466c-.072 1.051-.23 2.016-.428 2.59-.125.36-.479 1.013-1.04 1.639-.557.623-1.282 1.178-2.131 1.41C2.685 7.288 2 7.87 2 8.72v4.001c0 .845.682 1.464 1.448 1.545 1.07.114 1.564.415 2.068.723l.048.03c.272.165.578.348.97.484.397.136.861.217 1.466.217h3.5c.937 0 1.599-.477 1.934-1.064a1.86 1.86 0 0 0 .254-.912c0-.152-.023-.312-.077-.464.201-.263.38-.578.488-.901.11-.33.172-.762.004-1.149.069-.13.12-.269.159-.403.077-.27.113-.568.113-.857 0-.288-.036-.585-.113-.856a2 2 0 0 0-.138-.362 1.9 1.9 0 0 0 .234-1.734c-.206-.592-.682-1.1-1.2-1.272-.847-.282-1.803-.276-2.516-.211a10 10 0 0 0-.443.05 9.4 9.4 0 0 0-.062-4.509A1.38 1.38 0 0 0 9.125.111zM11.5 14.721H8c-.51 0-.863-.069-1.14-.164-.281-.097-.506-.228-.776-.393l-.04-.024c-.555-.339-1.198-.731-2.49-.868-.333-.036-.554-.29-.554-.55V8.72c0-.254.226-.543.62-.65 1.095-.3 1.977-.996 2.614-1.708.635-.71 1.064-1.475 1.238-1.978.243-.7.407-1.768.482-2.85.025-.362.36-.594.667-.518l.262.066c.16.04.258.143.288.255a8.34 8.34 0 0 1-.145 4.725.5.5 0 0 0 .595.644l.003-.001.014-.003.058-.014a9 9 0 0 1 1.036-.157c.663-.06 1.457-.054 2.11.164.175.058.45.3.57.65.107.308.087.67-.266 1.022l-.353.353.353.354c.043.043.105.141.154.315.048.167.075.37.075.581 0 .212-.027.414-.075.582-.05.174-.111.272-.154.315l-.353.353.353.354c.047.047.109.177.005.488a2.2 2.2 0 0 1-.505.805l-.353.353.353.354c.006.005.041.05.041.17a.9.9 0 0 1-.121.416c-.165.288-.503.56-1.066.56z"/>
-            </svg>
-            <span>좋아요 개수~</span>
-          </div>
-        </button>
+        <div class="form-group mb-5">
+            <span th:text="${post.content}">
+                게시물 내용입니다.게시물 내용입니다.게시물 내용입니다.
+                게시물 내용입니다.게시물 내용입니다.게시물 내용입니다.
+                게시물 내용입니다.게시물 내용입니다.게시물 내용입니다.
+                게시물 내용입니다.게시물 내용입니다.게시물 내용입니다.
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <button class="btn btn-primary" id="postLikeButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                </svg>
+                <span th:text="${likes}">00</span>
+            </button>
+        </div>
+    </div>
+
+    <h6>댓글(<span th:text="${commentsCount}" id="commentsCount">00</span>)</h6>
+
+    <div class="text-end">
+        <button type="button" class="btn btn-link">새로고침</button>
     </div>
 
     <!-- 댓글 -->
-  <div class="d-flex flex-column w-75 p-3 m-auto">
-      <div class="form-group mb-1">
-        <label for="comment">닉네임</label>
-        <textarea class="form-control" id="comment" rows="3"></textarea>
-      </div>
-    </div>
+    <div class="d-flex flex-column w-75 p-3 m-auto">
+        <input type="hidden" th:value="${post.id}" id="postId">
+        <input th:if="${user != null}" type="hidden" th:value="${user.id}" id="userId">
 
-  <!-- 대댓글 -->
-  <div class="d-flex flex-column w-75 p-3 m-auto">
-    <div class="form-group mb-3">
-      <label for="comment">닉네임</label>
-      <textarea class="form-control" id="re-comment" rows="3"></textarea>
+        <!-- 댓글 입력 폼 -->
+        <div th:if="${user != null}" class="form-group mb-3">
+            <label for="comment" th:text="${user.userId}">닉네임</label>
+            <textarea class="form-control" id="comment" rows="3"></textarea>
+            <button class="btn btn-primary mt-2" id="submitComment">등록</button>
+        </div>
+        <div th:if="${user == null}" class="mb-3">
+            회원에게만 댓글 작성 권한이 있습니다.
+        </div>
+
+        <div id="commentListContainer">
+             <div th:each="comment : ${commentList}">
+                <!-- 기본 댓글 -->
+                <div class="card p-2 mb-2">
+                    <div class="card-body">
+                        <p class="card-text"><b th:text="${comment.username}">닉네임</b></p>
+                        <p class="card-text" th:text="${comment.content}">댓글 내용이 들어갑니다.</p>
+                        <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
+                    </div>
+                </div>
+
+
+                <!-- 대댓글 -->
+                <div th:each="reply : ${comment.replies}">
+                    <div class="ms-4 border-start ps-3">
+                        <div class="card p-2 mb-2">
+                            <div class="card-body">
+                                <p class="card-text"><b th:text="${comment.username}">닉네임</b></p>
+                                <p class="card-text" th:text="${comment.content}">대댓글 내용이 들어갑니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
     <div th:replace="~{../fragments/footer :: footer}"></div>
 </div>
 
+<script th:src="@{/js/post.js}"></script>
+<script th:src="@{/js/comment.js}"></script>
 
 <!-- Bootstrap JS and Popper.js (CDN) -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
