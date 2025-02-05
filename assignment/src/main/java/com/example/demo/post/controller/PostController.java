@@ -51,7 +51,6 @@ public class PostController {
         return "edit-post";
     }
 
-    // 좋아요, 댓글 수 포함 조회
     @GetMapping(value = "/posts")
     public ResponseEntity<List<PostPreviewDTO>> getPostListByPage(@RequestParam(required = false) int page, HttpSession session, Model model) {
 

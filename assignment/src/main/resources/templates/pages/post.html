@@ -38,14 +38,14 @@
         </div>
     </div>
 
-    <h6>댓글(<span th:text="${commentsCount}" id="commentsCount">00</span>)</h6>
+    <h6>댓글(<span id="commentsCount">00</span>)</h6>
 
     <div class="text-end">
         <button type="button" class="btn btn-link">새로고침</button>
     </div>
 
     <!-- 댓글 -->
-    <div class="d-flex flex-column w-75 p-3 m-auto">
+    <div class="d-flex flex-column w-80 p-3 m-auto">
         <input type="hidden" th:value="${post.id}" id="postId">
         <input th:if="${user != null}" type="hidden" th:value="${user.id}" id="userId">
 
@@ -59,7 +59,8 @@
             회원에게만 댓글 작성 권한이 있습니다.
         </div>
 
-        <div id="commentListContainer">
+        <div id="commentListContainer"></div>
+        <div >
              <div th:each="comment : ${commentList}">
                 <!-- 기본 댓글 -->
                 <div class="card p-2 mb-2">

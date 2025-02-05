@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(commentList => {
         // 댓글 수 업데이트
-        commentCountsElement.value = commentList.length;
+        commentCountsElement.innerText = commentList.length;
 
         // 댓글을 화면에 동적으로 추가
         const commentListContainer = document.getElementById("commentListContainer");
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         commentList.forEach(comment => {
             const commentElement = document.createElement('div');
-            commentElement.classList.add('card', 'p-2', 'mb-2');
+            commentElement.classList.add('card', 'p-1', 'mb-4');
 
             commentElement.innerHTML = `
                 <div class="card-body">
