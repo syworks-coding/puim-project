@@ -125,7 +125,7 @@ public class PostController {
         postUpdateDTO.setTitle(findPost.getTitle());
         postUpdateDTO.setContent(findPost.getContent());
 
-        model.addAttribute("postCreateDTO", postUpdateDTO);
+        model.addAttribute("postUpdateDTO", postUpdateDTO);
 
         return "edit-post";
     }

@@ -61,7 +61,7 @@ INSERT INTO comment (content, post_id, parent_id, user_id, created_at, is_delete
 ('열여덟 번째 댓글', 18, NULL, 3, NOW(), false),
 ('열아홉 번째 댓글', 19, NULL, 1, NOW(), false),
 ('스무 번째 댓글', 20, NULL, 2, NOW(), false),
-('열 번째 댓글의 대댓글', 10, 10, 3, NOW(), false),
+('열 번째 댓글의 대댓글', 2, 2, 3, NOW(), false),
 ('삭제된 대댓글', 5, 5, 1, NOW(), true),
 ('추가된 댓글1', 1, NULL, 1, NOW(), false),
 ('추가된 댓글2', 1, NULL, 1, NOW(), false),

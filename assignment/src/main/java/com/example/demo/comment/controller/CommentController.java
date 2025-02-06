@@ -16,7 +16,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<Comment> saveComment(@RequestBody CommentDTO commentDTO) {
+    public ResponseEntity<Comment> saveComment(@PathVariable long postId, @RequestBody CommentDTO commentDTO) {
 
         Comment savedComment = commentService.createComment(commentDTO);
 
@@ -31,15 +31,16 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<Void> updateComment(@PathVariable long commentId, @RequestBody CommentDTO commentDTO) {
+    public ResponseEntity<Void> updateComment(@PathVariable long postId, @PathVariable long commentId, @RequestBody CommentDTO commentDTO) {
 
         commentService.updateComment(commentId, commentDTO);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable long commentId) {
+    public ResponseEntity<Void> deleteComment(@PathVariable long postId, @PathVariable long commentId) {
 
+        commentService.deleteCommentById(commentId);
         return ResponseEntity.ok().build();
     }
 }

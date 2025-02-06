@@ -30,55 +30,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 commentListContainer.innerHTML = '';  // 기존 댓글 목록 초기화
 
                 commentList.forEach(comment => {
+
                     const commentContainer = document.createElement('div');
 
-                    const commentElement = document.createElement('div');
-                    commentElement.classList.add('card', 'p-1', 'mb-4');
-
-                    commentElement.innerHTML = `
-                        <div class="card-body">
-                        <div class="row">
-                            <div class="col-8 text-start">
-                                <b>${comment.username}</b>
-                            </div>
-                            <div class="col-4 text-end">
-                                <button type="button" class="btn btn-link">수정</button>
-                                <button type="button" class="btn btn-link" data-comment-id="${comment.id}">삭제</button>
-                            </div>
-                        </div>
-                            <p class="card-text">${comment.content}</p>
-                            <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
-                        </div>
-                    `;
-
-
-
+                    const commentElement = createCommentElement(comment);
                     commentContainer.appendChild(commentElement);
 
                     comment.replies.forEach(reply => {
-                        const replyContainer = document.createElement('div');
-                        replyContainer.classList.add('ms-4', 'border-start', 'ps-3');
 
-                        const replyElement = document.createElement('div');
-                        replyElement.classList.add('card', 'p-1', 'mb-2');
-
-                        replyElement.innerHTML = `
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-8 text-start">
-                                            <b>${reply.username}</b>
-                                        </div>
-                                        <div class="col-4 text-end">
-                                            <button type="button" class="btn btn-link">수정</button>
-                                            <button type="button" class="btn btn-link">삭제</button>
-                                        </div>
-                                    </div>
-                                    <p class="card-text">${reply.content}</p>
-                                </div>
-                        `;
-
-                        replyContainer.appendChild(replyElement);
-                        commentContainer.appendChild(replyContainer);
+                        const replyElement = createReplyElement(commentContainer, reply);
+                        commentContainer.appendChild(replyElement);
                     });
 
                     commentListContainer.appendChild(commentContainer);
@@ -89,11 +50,69 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    function createCommentElement(comment) {
+        const template = document.getElementById('comment-template');
+        const clone = template.content.cloneNode(true);
+
+        clone.querySelector('.username').textContent = comment.username;
+        clone.querySelector('.content').textContent = comment.content;
+
+        // 삭제 버튼 바인딩
+        const deleteBtn = clone.querySelector('.delete-btn');
+        deleteBtn.setAttribute('data-comment-id', comment.id);
+        deleteBtn.addEventListener('click', () => {
+                console.log(`삭제 버튼 클릭 ${comment.id}`);
+                deleteComment(comment.id);
+            });
+
+        return clone;
+    }
+
+    function createReplyElement(commentContainer, reply) {
+        const template = document.getElementById('reply-template');
+        const clone = template.content.cloneNode(true);
+
+        clone.querySelector('.username').textContent = reply.username;
+        clone.querySelector('.content').textContent = reply.content;
+
+        // 삭제 버튼 바인딩
+        const deleteBtn = clone.querySelector('.delete-btn');
+        deleteBtn.setAttribute('data-comment-id', reply.id);
+        deleteBtn.addEventListener('click', () => {
+                console.log(`삭제 버튼 클릭 ${reply.id}`);
+                deleteComment(comment.id);
+            });
+
+        return clone;
+    }
+
     // 댓글 새로고침 버튼 클릭 바인딩
     refreshButton.addEventListener("click", function () {
         // console.log('새로고침');
         updateComments();
     });
+
+    // 댓글 삭제 버튼 클릭 이벤트
+    function deleteComment(commentId) {
+            if (!confirm('댓글을 삭제하시겠습니까?')) {
+                    return;
+                }
+
+            fetch('/posts/' + postId + '/comments/' + commentId, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if(!response.ok) {
+                        throw new Error('댓글 삭제 실패');
+                    }
+
+                    updateComments();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
 
     // 비로그인회원
     if(commentButton == null) {
@@ -141,11 +160,5 @@ document.addEventListener("DOMContentLoaded", function () {
                       console.error('Error:', error);
                   });
         });
-
-
-    // 댓글 삭제 버튼 클릭 이벤트
-    function deleteComment() {
-
-    }
 
 });

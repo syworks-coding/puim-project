@@ -8,6 +8,13 @@
 </head>
 <body>
 <div class="container">
+    <div class="alert alert-success" role="alert"
+         th:if="${message}">
+        <span th:text="${message}"></span>
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert"
+                type="button"></button>
+    </div>
+
     <div th:replace="~{../fragments/header :: header(user=${user})}"></div>
 
     <div class="list-group list-group-flush border-bottom mb-3">
@@ -17,7 +24,7 @@
                     <h4 class="h5 mb-3 fw-normal" th:text="${post.title}">게시물 제목입니다.</h4>
                 </div>
                 <div class="col-4 mb-3 text-end">
-                    <button id="postEditButton" type="button" class="btn btn-link">수정</button>
+                    <button th:onclick="|location.href='/posts/${post.id}/edit'|" type="button" class="btn btn-link">수정</button>
                     <button th:onclick="|location.href='/posts/${post.id}/delete'|" type="button" class="btn btn-link">삭제</button>
                 </div>
             </div>
@@ -113,7 +120,43 @@
     <div th:replace="~{../fragments/footer :: footer}"></div>
 </div>
 
-<script th:src="@{/js/post.js}"></script>
+<template id="comment-template">
+    <div class="card p-2 mb-2">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-8 text-start">
+                    <b class="username"></b>
+                </div>
+                <div class="col-4 text-end">
+                    <button type="button" class="btn btn-link edit-btn">수정</button>
+                    <button type="button" class="btn btn-link delete-btn">삭제</button>
+                </div>
+            </div>
+            <p class="card-text content"></p>
+            <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
+        </div>
+    </div>
+</template>
+
+<template id="reply-template">
+    <div class="ms-4 border-start ps-3">
+        <div class="card p-2 mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-8 text-start">
+                        <b class="username"></b>
+                    </div>
+                    <div class="col-4 text-end">
+                        <button type="button" class="btn btn-link edit-btn">수정</button>
+                        <button type="button" class="btn btn-link delete-btn">삭제</button>
+                    </div>
+                </div>
+                <p class="card-text content"></p>
+            </div>
+        </div>
+    </div>
+</template>
+
 <script th:src="@{/js/likes.js}"></script>
 <script th:src="@{/js/comment.js}"></script>
 

@@ -102,26 +102,27 @@ public class CommentService {
     public void deleteByPostId(long postId) {
         List<Comment> commentList = commentRepository.findByPostId(postId);
         for (Comment comment : commentList) {
-            deleteRepliesById(comment.getId());
+            deleteCommentById(comment.getId());
             commentRepository.deleteById(comment.getId());
         }
     }
 
     @Transactional
-    public void deleteRepliesById(long id) {
+    public void deleteCommentById(long id) {
         List<CommentQueryDTO> childComments = commentMapper.findRepliesByParentId(id);
 
         for (CommentQueryDTO childComment : childComments) {
             commentRepository.deleteById(childComment.getId());
         }
+
+        commentRepository.deleteById(id);
     }
 
     @Transactional
     public void deleteByUserId(long userId) {
         List<Comment> commentList = commentRepository.findByUserId(userId);
         for (Comment comment : commentList) {
-            deleteRepliesById(comment.getId());
-            commentRepository.deleteById(comment.getId());
+            deleteCommentById(comment.getId());
         }
     }
 }
