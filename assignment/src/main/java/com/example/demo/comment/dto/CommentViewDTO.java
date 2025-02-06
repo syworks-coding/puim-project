@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 public class CommentViewDTO {
 
+    private Long id;
     private Long postId;
     private String username;
     private String content;

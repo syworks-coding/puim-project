@@ -11,6 +11,7 @@ import com.example.demo.post.model.Post;
 import com.example.demo.post.repository.PostRepository;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -50,13 +51,13 @@ public class CommentService {
         int totalCount = commentRepository.countByPostId(postId);
 
         CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
-        commentResponseDTO.setComments(getCommentViewDTOS(postId));
+        commentResponseDTO.setComments(findCommentViewDTOS(postId));
         commentResponseDTO.setTotalCount(totalCount);
 
         return commentResponseDTO;
     }
 
-    private List<CommentViewDTO> getCommentViewDTOS(long postId) {
+    public List<CommentViewDTO> findCommentViewDTOS(long postId) {
         List<CommentViewDTO> comments = new ArrayList<>();
 
         List<CommentQueryDTO> parentComments = commentMapper.findParentCommentsByPostId(postId);
@@ -81,6 +82,7 @@ public class CommentService {
 
     private CommentViewDTO commentQueryDTOToCommentViewDTO(CommentQueryDTO commentQueryDTO) {
         CommentViewDTO commentViewDTO = new CommentViewDTO();
+        commentViewDTO.setId(commentQueryDTO.getId());
         commentViewDTO.setPostId(commentQueryDTO.getPostId());
         commentViewDTO.setUsername(commentQueryDTO.getUserName());
         commentViewDTO.setContent(commentQueryDTO.getContent());
@@ -96,4 +98,30 @@ public class CommentService {
 //        findComment.setContent(comment.getContent());
     }
 
+    @Transactional
+    public void deleteByPostId(long postId) {
+        List<Comment> commentList = commentRepository.findByPostId(postId);
+        for (Comment comment : commentList) {
+            deleteRepliesById(comment.getId());
+            commentRepository.deleteById(comment.getId());
+        }
+    }
+
+    @Transactional
+    public void deleteRepliesById(long id) {
+        List<CommentQueryDTO> childComments = commentMapper.findRepliesByParentId(id);
+
+        for (CommentQueryDTO childComment : childComments) {
+            commentRepository.deleteById(childComment.getId());
+        }
+    }
+
+    @Transactional
+    public void deleteByUserId(long userId) {
+        List<Comment> commentList = commentRepository.findByUserId(userId);
+        for (Comment comment : commentList) {
+            deleteRepliesById(comment.getId());
+            commentRepository.deleteById(comment.getId());
+        }
+    }
 }

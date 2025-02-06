@@ -8,17 +8,25 @@
 </head>
 <body>
 <div class="container">
+
+    <div class="alert alert-success" role="alert"
+         th:if="${message}">
+        <span th:text="${message}"></span>
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert"
+                type="button"></button>
+    </div>
+
     <div th:replace="~{../fragments/header :: header(user=${user})}"></div>
 
     <div class="list-group list-group-flush border-bottom mb-3" id="post-list">
-        <div th:each="postDTO : ${postPreviewDTOList}">
-            <a href="#" th:href="@{/posts/{id}(id=${postDTO.id})}" class="list-group-item list-group-item-action  py-3 lh-sm" aria-current="true">
+        <div th:each="postCreateDTO : ${postPreviewDTOList}">
+            <a href="#" th:href="@{/posts/{id}(id=${postCreateDTO.id})}" class="list-group-item list-group-item-action  py-3 lh-sm" aria-current="true">
                 <div class="d-flex w-100 align-items-center justify-content-between">
-                    <strong class="mb-1" th:text="${postDTO.title}">게시글 제목입니다.</strong>
-                    <small th:text="${postDTO.createdAt}">0000-00-00</small>
+                    <strong class="mb-1" th:text="${postCreateDTO.title}">게시글 제목입니다.</strong>
+                    <small th:text="${postCreateDTO.createdAt}">0000-00-00</small>
                 </div>
                 <div class="col-10 mb-1 small">
-                    <span th:text="${postDTO.user.userId}">작성자</span>
+                    <span th:text="${postCreateDTO.user.userId}">작성자</span>
 
                 </div>
             </a>
@@ -28,6 +36,7 @@
     <div th:replace="~{../fragments/pagination :: pagination(currentPage=${currentPage})}"></div>
 
     <div th:replace="~{../fragments/footer :: footer}"></div>
+
 </div>
 
 <script th:src="@{/js/pagination.js}"></script>

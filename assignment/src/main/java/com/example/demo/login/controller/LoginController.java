@@ -1,7 +1,7 @@
 package com.example.demo.login.controller;
 
 import com.example.demo.login.service.LoginService;
-import com.example.demo.user.dto.UserDTO;
+import com.example.demo.user.dto.UserCreateDTO;
 import com.example.demo.user.model.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.nio.file.AccessDeniedException;
 
@@ -24,9 +23,9 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> tryLogin(@Validated @RequestBody UserDTO userDTO, HttpSession session) {
+    public ResponseEntity<Void> tryLogin(@Validated @RequestBody UserCreateDTO userCreateDTO, HttpSession session) {
 
-        User user = loginService.login(userDTO.getUserId(), userDTO.getUserPw());
+        User user = loginService.login(userCreateDTO.getUserId(), userCreateDTO.getUserPw());
 
         if(user == null) {
             return ResponseEntity.notFound().build();

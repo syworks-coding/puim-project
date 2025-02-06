@@ -2,15 +2,11 @@ package com.example.demo.comment.controller;
 
 import com.example.demo.comment.dto.CommentDTO;
 import com.example.demo.comment.dto.CommentResponseDTO;
-import com.example.demo.comment.dto.CommentViewDTO;
 import com.example.demo.comment.model.Comment;
 import com.example.demo.comment.service.CommentService;
-import com.example.demo.post.model.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/posts/{postId}/comments")

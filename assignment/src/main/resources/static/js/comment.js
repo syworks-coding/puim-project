@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateComments() {
         // 댓글 조회
-            fetch('/posts/' + postId + '/comments')
+        fetch('/posts/' + postId + '/comments')
             .then(response => {
                 if(!response.ok) {
                     throw new Error('댓글 조회 실패');
@@ -43,13 +43,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                             <div class="col-4 text-end">
                                 <button type="button" class="btn btn-link">수정</button>
-                                <button type="button" class="btn btn-link">삭제</button>
+                                <button type="button" class="btn btn-link" data-comment-id="${comment.id}">삭제</button>
                             </div>
                         </div>
                             <p class="card-text">${comment.content}</p>
                             <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
                         </div>
                     `;
+
+
 
                     commentContainer.appendChild(commentElement);
 
@@ -93,13 +95,12 @@ document.addEventListener("DOMContentLoaded", function () {
         updateComments();
     });
 
-
     // 비로그인회원
     if(commentButton == null) {
        return;
     }
 
-    // 댓글작성 버튼 클릭 바인딩
+    // 댓글 작성 버튼 클릭 바인딩
     commentButton.addEventListener("click", function () {
             //const parentId = document.getElementById("parentId").value;
 
@@ -114,37 +115,37 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("작성된 댓글:", commentText);
 
              const url = '/posts/' + postId + '/comments';  // POST 요청을 보낼 URL
-                       const data = {
-                           postId: postId,
-                           content: commentText,
-                           userId: userId,
-                           parentId: parentId
-                       };
+             const data = {
+                 postId: postId,
+                 content: commentText,
+                 userId: userId,
+                 parentId: parentId
+             };
+             fetch(url, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(data)
+                  })
+                  .then(response => {
 
-                       console.log(url);
-                       console.log(data);
+                      if (!response.ok) {
+                          throw new Error('Request failed');
+                      }
 
-                       fetch(url, {
-                           method: 'POST',
-                           headers: {
-                               'Content-Type': 'application/json'
-                           },
-                           body: JSON.stringify(data)
-                       })
-                       .then(response => {
-
-                           if (!response.ok) {
-                               throw new Error('Request failed');
-                           }
-
-                           document.getElementById("comment").value = "";
-                       })
-                       .catch(error => {
-                           console.error('Error:', error);
-                       });
-
-             updateComments();
-
+                      document.getElementById("comment").value = "";
+                      updateComments();
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                  });
         });
+
+
+    // 댓글 삭제 버튼 클릭 이벤트
+    function deleteComment() {
+
+    }
 
 });

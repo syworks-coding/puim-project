@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,5 +51,13 @@ public class LikesService {
         likes.setPost(post);
         likes.setUser(user);
         likesRepository.save(likes);
+    }
+
+    @Transactional
+    public void deleteByPostId(long postId) {
+        List<Likes> likesList = likesRepository.findByPostId(postId);
+        for (Likes likes : likesList) {
+            likesRepository.delete(likes);
+        }
     }
 }
