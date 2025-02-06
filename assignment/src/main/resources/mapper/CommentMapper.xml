@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.CommentMapper">
+
+    <!-- 부모 댓글 조회 -->
+    <select id="findParentCommentsByPostId" resultType="com.example.demo.comment.dto.CommentQueryDTO">
+        SELECT c.*, u.user_id AS userName
+        FROM comment c
+        LEFT JOIN users u ON c.user_id = u.id
+        WHERE c.post_id = #{postId} AND c.parent_id IS NULL
+        ORDER BY c.created_at DESC
+    </select>
+
+    <!-- 대댓글 조회 -->
+    <select id="findRepliesByParentId" resultType="com.example.demo.comment.dto.CommentQueryDTO">
+        SELECT c.*, u.user_id AS userName
+        FROM comment c
+        LEFT JOIN users u ON c.user_id = u.id
+        WHERE c.parent_id = #{parentId}
+        ORDER BY c.created_at DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${post.title}">게시물 상세</title>
+    <!-- Bootstrap CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="alert alert-success" role="alert"
+         th:if="${message}">
+        <span th:text="${message}"></span>
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert"
+                type="button"></button>
+    </div>
+
+    <div th:replace="~{../fragments/header :: header(user=${user})}"></div>
+
+    <div class="list-group list-group-flush border-bottom mb-3">
+        <div class="form-group mt-3">
+            <div class="row">
+                <div class="col-8 text-start">
+                    <h4 class="h5 mb-3 fw-normal" th:text="${post.title}">게시물 제목입니다.</h4>
+                </div>
+                <div class="col-4 mb-3 text-end">
+                    <button th:onclick="|location.href='/posts/${post.id}/edit'|" type="button" class="btn btn-link">수정</button>
+                    <button th:onclick="|location.href='/posts/${post.id}/delete'|" type="button" class="btn btn-link">삭제</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mb-5">
+            <span th:text="${post.content}">
+                게시물 내용입니다.게시물 내용입니다.게시물 내용입니다.
+                게시물 내용입니다.게시물 내용입니다.게시물 내용입니다.
+                게시물 내용입니다.게시물 내용입니다.게시물 내용입니다.
+                게시물 내용입니다.게시물 내용입니다.게시물 내용입니다.
+            </span>
+        </div>
+
+        <!-- 좋아요 -->
+        <div class="mb-3 d-flex justify-content-center">
+            <button class="btn btn-primary" id="likesButton">
+                <i id="likesIcon" class="bi bi-heart"></i>
+                <span id="likesCount" th:text="${likes}">00</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8 text-start">
+            <h6>댓글(<span id="commentsCount">00</span>)</h6>
+        </div>
+        <div class="col-4 text-end">
+            <button id="refreshComment" type="button" class="btn btn-link">새로고침</button>
+        </div>
+    </div>
+
+    <!-- 댓글 -->
+    <div class="d-flex flex-column w-80 p-3 m-auto">
+        <input type="hidden" th:value="${post.id}" id="postId">
+        <input th:if="${user != null}" type="hidden" th:value="${user.id}" id="userId">
+
+        <!-- 댓글 입력 폼 -->
+        <div th:if="${user != null}" class="form-group mb-3">
+            <label for="comment" th:text="${user.userId}">닉네임</label>
+            <textarea class="form-control" id="comment" rows="3"></textarea>
+            <button class="btn btn-primary mt-2" id="submitComment">등록</button>
+        </div>
+        <div th:if="${user == null}" class="mb-3">
+            회원에게만 댓글 작성 권한이 있습니다.
+        </div>
+
+        <div id="commentListContainer"></div>
+        <div >
+             <div th:each="comment : ${commentList}">
+                <!-- 기본 댓글 -->
+                <div class="card p-2 mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8 text-start">
+                                <b th:text="${comment.username}">닉네임</b>
+                            </div>
+                            <div class="col-4 text-end">
+                                <button type="button" class="btn btn-link">수정</button>
+                                <button type="button" class="btn btn-link">삭제</button>
+                            </div>
+                        </div>
+                        <p class="card-text" th:text="${comment.content}">댓글 내용이 들어갑니다.</p>
+                        <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
+                    </div>
+                </div>
+
+
+                <!-- 대댓글 -->
+                <div th:each="reply : ${comment.replies}">
+                    <div class="ms-4 border-start ps-3">
+                        <div class="card p-2 mb-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-8 text-start">
+                                        <b th:text="${comment.username}">닉네임</b>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <button type="button" class="btn btn-link">수정</button>
+                                        <button type="button" class="btn btn-link">삭제</button>
+                                    </div>
+                                </div>
+                                <p class="card-text" th:text="${comment.content}">대댓글 내용이 들어갑니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{../fragments/footer :: footer}"></div>
+</div>
+
+<template id="comment-template">
+    <div class="card p-2 mb-2">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-8 text-start">
+                    <b class="username"></b>
+                </div>
+                <div class="col-4 text-end">
+                    <button type="button" class="btn btn-link edit-btn">수정</button>
+                    <button type="button" class="btn btn-link delete-btn">삭제</button>
+                </div>
+            </div>
+            <p class="card-text content"></p>
+            <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
+        </div>
+    </div>
+</template>
+
+<template id="reply-template">
+    <div class="ms-4 border-start ps-3">
+        <div class="card p-2 mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-8 text-start">
+                        <b class="username"></b>
+                    </div>
+                    <div class="col-4 text-end">
+                        <button type="button" class="btn btn-link edit-btn">수정</button>
+                        <button type="button" class="btn btn-link delete-btn">삭제</button>
+                    </div>
+                </div>
+                <p class="card-text content"></p>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script th:src="@{/js/likes.js}"></script>
+<script th:src="@{/js/comment.js}"></script>
+
+<!-- Bootstrap JS and Popper.js (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+<!-- Bootstrap Font Icon CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+</body>
+</html>
