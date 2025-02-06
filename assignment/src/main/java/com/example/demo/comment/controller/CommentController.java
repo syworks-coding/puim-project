@@ -1,6 +1,7 @@
 package com.example.demo.comment.controller;
 
 import com.example.demo.comment.dto.CommentDTO;
+import com.example.demo.comment.dto.CommentResponseDTO;
 import com.example.demo.comment.dto.CommentViewDTO;
 import com.example.demo.comment.model.Comment;
 import com.example.demo.comment.service.CommentService;
@@ -27,10 +28,10 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CommentViewDTO>> getComments(@PathVariable long postId) {
+    public ResponseEntity<CommentResponseDTO> getComments(@PathVariable long postId) {
 
-        List<CommentViewDTO> commentList = commentService.findByPostId(postId);
-        return ResponseEntity.ok(commentList);
+        CommentResponseDTO commentResponseDTO = commentService.findByPostId(postId);
+        return ResponseEntity.ok(commentResponseDTO);
     }
 
     @PutMapping("/{commentId}")

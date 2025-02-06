@@ -2,6 +2,7 @@ package com.example.demo.comment.service;
 
 import com.example.demo.comment.dto.CommentDTO;
 import com.example.demo.comment.dto.CommentQueryDTO;
+import com.example.demo.comment.dto.CommentResponseDTO;
 import com.example.demo.comment.dto.CommentViewDTO;
 import com.example.demo.comment.model.Comment;
 import com.example.demo.comment.repository.CommentRepository;
@@ -45,28 +46,46 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public List<CommentViewDTO> findByPostId(long postId) {
+    public CommentResponseDTO findByPostId(long postId) {
+        int totalCount = commentRepository.countByPostId(postId);
 
+        CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
+        commentResponseDTO.setComments(getCommentViewDTOS(postId));
+        commentResponseDTO.setTotalCount(totalCount);
+
+        return commentResponseDTO;
+    }
+
+    private List<CommentViewDTO> getCommentViewDTOS(long postId) {
         List<CommentViewDTO> comments = new ArrayList<>();
 
         List<CommentQueryDTO> parentComments = commentMapper.findParentCommentsByPostId(postId);
 
         for (CommentQueryDTO parent : parentComments) {
-            CommentViewDTO commentViewDTO = new CommentViewDTO();
-            commentViewDTO.setPostId(parent.getPostId());
-            commentViewDTO.setUsername(parent.getUserName());
-            commentViewDTO.setContent(parent.getContent());
-            commentViewDTO.setCreatedAt(parent.getCreatedAt());
+            CommentViewDTO commentViewDTO = commentQueryDTOToCommentViewDTO(parent);
 
             commentViewDTO.setReplies(null);
 
             List<CommentQueryDTO> childComments = commentMapper.findRepliesByParentId(parent.getId());
-            //commentViewDTO.setReplies(convertToDTOList(childComments));
+            List<CommentViewDTO> convertedChildComments = new ArrayList<>();
 
+            for (CommentQueryDTO childComment : childComments) {
+                CommentViewDTO converted = commentQueryDTOToCommentViewDTO(childComment);
+                convertedChildComments.add(converted);
+            }
+            commentViewDTO.setReplies(convertedChildComments);
             comments.add(commentViewDTO);
         }
-
         return comments;
+    }
+
+    private CommentViewDTO commentQueryDTOToCommentViewDTO(CommentQueryDTO commentQueryDTO) {
+        CommentViewDTO commentViewDTO = new CommentViewDTO();
+        commentViewDTO.setPostId(commentQueryDTO.getPostId());
+        commentViewDTO.setUsername(commentQueryDTO.getUserName());
+        commentViewDTO.setContent(commentQueryDTO.getContent());
+        commentViewDTO.setCreatedAt(commentQueryDTO.getCreatedAt());
+        return commentViewDTO;
     }
 
     public void updateComment(long id, CommentDTO commentDTO) {

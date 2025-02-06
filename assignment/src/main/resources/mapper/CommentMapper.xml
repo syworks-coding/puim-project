@@ -17,7 +17,7 @@
         SELECT c.*, u.user_id AS userName
         FROM comment c
         LEFT JOIN users u ON c.user_id = u.id
-        WHERE c.post_id = #{postId} AND c.parent_id IS NULL
+        WHERE c.parent_id = #{parentId}
         ORDER BY c.created_at DESC
     </select>
 

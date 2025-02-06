@@ -27,7 +27,7 @@ public class PostService {
     public List<Post> getPostList(int page, int postsPerPage) {
 
         Page<Post> postListPage = postRepository.findAll(
-                PageRequest.of(page, postsPerPage, Sort.by(Sort.Order.desc("createdAt")))
+                PageRequest.of(page, postsPerPage, Sort.by(Sort.Order.asc("id")))
         );
 
         return postListPage.get().toList();

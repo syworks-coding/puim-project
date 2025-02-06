@@ -1,6 +1,7 @@
 package com.example.demo.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @NoArgsConstructor
@@ -11,8 +12,10 @@ import lombok.*;
 public class UserDTO {
 
     @NotBlank
+    @Size(max = 16)
     private String userId;
 
     @NotBlank
+    @Size(max = 20)
     private String userPw;
 }

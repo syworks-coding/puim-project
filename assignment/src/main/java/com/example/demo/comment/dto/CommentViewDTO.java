@@ -11,14 +11,10 @@ import java.util.List;
 public class CommentViewDTO {
 
     private Long postId;
-
     private String username;
-
     private String content;
-
     private List<CommentViewDTO> replies;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
+    private boolean isDeleted;
 }
