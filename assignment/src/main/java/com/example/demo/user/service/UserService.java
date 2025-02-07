@@ -7,6 +7,9 @@ import com.example.demo.user.dto.UserUpdateDTO;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,5 +47,9 @@ public class UserService {
         postService.deletePostsByUserId(id);
         commentService.deleteByUserId(id);
         userRepository.deleteById(id);
+    }
+
+    public boolean canUseId(String userId) {
+        return !userRepository.findByUserId(userId).isPresent();
     }
 }

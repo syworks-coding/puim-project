@@ -1,8 +1,8 @@
 -- User 테이블에 3명의 사용자 추가
 INSERT INTO users (user_id, user_pw) VALUES ('puim', '12');
-INSERT INTO users (user_id, user_pw) VALUES ('홍길동', 'password1');
-INSERT INTO users (user_id, user_pw) VALUES ('김철수', 'password2');
-INSERT INTO users (user_id, user_pw) VALUES ('이영희', 'password3');
+INSERT INTO users (user_id, user_pw) VALUES ('gildong', 'password1');
+INSERT INTO users (user_id, user_pw) VALUES ('cheolsu', 'password2');
+INSERT INTO users (user_id, user_pw) VALUES ('yeonghee', 'password3');
 
 -- Post 테이블에 20개의 게시글 추가
 -- 홍길동의 게시글

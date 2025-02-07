@@ -8,14 +8,14 @@
 </head>
 <body>
 <div class="container">
+    <div th:replace="~{../fragments/header :: header(user=${user})}"></div>
+
     <div class="alert alert-success" role="alert"
          th:if="${message}">
         <span th:text="${message}"></span>
         <button aria-label="Close" class="btn-close" data-bs-dismiss="alert"
                 type="button"></button>
     </div>
-
-    <div th:replace="~{../fragments/header :: header(user=${user})}"></div>
 
     <div class="list-group list-group-flush border-bottom mb-3">
         <div class="form-group mt-3">

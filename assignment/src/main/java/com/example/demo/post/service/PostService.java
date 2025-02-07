@@ -3,10 +3,8 @@ package com.example.demo.post.service;
 import com.example.demo.comment.dto.CommentViewDTO;
 import com.example.demo.comment.service.CommentService;
 import com.example.demo.likes.service.LikesService;
-import com.example.demo.post.dto.PostCreateDTO;
-import com.example.demo.post.dto.PostPreviewDTO;
-import com.example.demo.post.dto.PostUpdateDTO;
-import com.example.demo.post.dto.PostViewDTO;
+import com.example.demo.mapper.PostMapper;
+import com.example.demo.post.dto.*;
 import com.example.demo.post.model.Post;
 import com.example.demo.post.repository.PostRepository;
 import com.example.demo.user.model.User;
@@ -26,17 +24,24 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostMapper postMapper;
+
     private final UserRepository userRepository;
     private final LikesService likesService;
     private final CommentService commentService;
 
-    public List<Post> getPostList(int page, int postsPerPage) {
+    public PostListDTO getPostListDTO(int page, int postsPerPage) {
 
-        Page<Post> postListPage = postRepository.findAll(
-                PageRequest.of(page, postsPerPage, Sort.by(Sort.Order.desc("id")))
-        );
+        PostListDTO postListDTO = new PostListDTO();
+        List<PostPreviewDTO> postPreviewDTOList = postMapper.findPostInfoById(postsPerPage, page * postsPerPage);
+        postListDTO.setPosts(postPreviewDTOList);
 
-        return postListPage.get().toList();
+        long totalCount = postRepository.count();
+        postListDTO.setTotalCount(totalCount);
+        postListDTO.setTotalPage(totalCount / postsPerPage + 1);
+
+
+        return postListDTO;
     }
 
     public Post findById(long postId) {
@@ -78,18 +83,6 @@ public class PostService {
         likesService.deleteByPostId(postId);
         commentService.deleteByPostId(postId);
         postRepository.deleteById(postId);
-    }
-
-    //
-    public List<PostPreviewDTO> getPostPreviewList(int page, int postsPerPage) {
-        Page<Post> postListPage = postRepository.findAll(
-                PageRequest.of(page, postsPerPage, Sort.by(Sort.Order.desc("createdAt")))
-        );
-
-        List<PostPreviewDTO> postPreviewDTOList = new ArrayList<>();
-       // likesRepository.countByPostId();
-
-        return postPreviewDTOList;
     }
 
     public PostViewDTO getPostViewDTO(long postId) {

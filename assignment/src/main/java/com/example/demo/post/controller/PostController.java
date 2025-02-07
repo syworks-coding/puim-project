@@ -1,7 +1,7 @@
 package com.example.demo.post.controller;
 
 import com.example.demo.post.dto.PostCreateDTO;
-import com.example.demo.post.dto.PostPreviewDTO;
+import com.example.demo.post.dto.PostListDTO;
 import com.example.demo.post.dto.PostUpdateDTO;
 import com.example.demo.post.dto.PostViewDTO;
 import com.example.demo.post.model.Post;
@@ -32,9 +32,8 @@ public class PostController {
         model.addAttribute("user", user);
 
         int toShowPage = page == null ? 0 : page - 1;
-        List<Post> postList = postService.getPostList(toShowPage, postsPerPage);
-        model.addAttribute("postPreviewDTOList", postList);
-        model.addAttribute("postCount", postList.size());
+        PostListDTO postListDTO = postService.getPostListDTO(toShowPage, postsPerPage);
+        model.addAttribute("postListDTO", postListDTO);
 
         model.addAttribute("currentPage", toShowPage);
         model.addAttribute("startPage", 0);
@@ -42,24 +41,6 @@ public class PostController {
 
         return "main";
     }
-
-
-
-    @GetMapping(value = "/posts")
-    public ResponseEntity<List<PostPreviewDTO>> getPostListByPage(@RequestParam(required = false) int page, HttpSession session, Model model) {
-
-        List<PostPreviewDTO> postList = postService.getPostPreviewList(page - 1, postsPerPage);
-        return ResponseEntity.ok(postList);
-    }
-
-    // 기본 목록 조회
-    @GetMapping(value = "/posts-basic")
-    public ResponseEntity<List<Post>> getPostListByPageBasic(@RequestParam(required = false) int page, HttpSession session, Model model) {
-
-        List<Post> postList = postService.getPostList(page - 1, postsPerPage);
-        return ResponseEntity.ok(postList);
-    }
-
 
     // 게시글 상세
     @GetMapping("/posts/{postId}")

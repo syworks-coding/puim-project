@@ -40,6 +40,11 @@ public class UserController {
     @PostMapping("/users")
     public String createUser(@Validated @ModelAttribute UserCreateDTO userCreateDTO, BindingResult bindingResult) {
 
+        // 중복 회원 검증
+        if(userService.canUseId(userCreateDTO.getUserId())) {
+            bindingResult.rejectValue("userId", "", "사용할 수 없는 아이디 입니다.");
+        }
+
         // 비밀번호 확인 불일치
         if(!userCreateDTO.idPasswordMatch()) {
             bindingResult.rejectValue("userPwCheck", "", "새 비밀번호와 일치하지 않습니다.");
