@@ -25,7 +25,7 @@
             <input type="hidden" th:value="${postListDTO.totalPage}" id="totalPage">
             <a href="#" th:href="@{/posts/{id}(id=${postDTO.id})}" class="list-group-item list-group-item-action  py-3 lh-sm" aria-current="true">
                 <div class="d-flex w-100 align-items-center justify-content-between">
-                    <strong class="mb-1" th:text="${postDTO.title +'(' + postDTO.likes + ')'}">게시글 제목입니다.</strong>
+                    <strong class="mb-1" th:text="${postDTO.title +'(' + postDTO.comments + ')'}">게시글 제목입니다.</strong>
                     <small th:text="${postDTO.createdAt}">0000-00-00</small>
                 </div>
                 <div class="col-10 mb-1 small">

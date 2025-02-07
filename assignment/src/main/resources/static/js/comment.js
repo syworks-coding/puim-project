@@ -54,6 +54,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const template = document.getElementById('comment-template');
         const clone = template.content.cloneNode(true);
 
+        const replyInputContainer = clone.querySelector('.replyInputContainer');
+
         clone.querySelector('.username').textContent = comment.username;
         clone.querySelector('.content').textContent = comment.content;
 
@@ -61,13 +63,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const deleteBtn = clone.querySelector('.delete-btn');
         deleteBtn.setAttribute('data-comment-id', comment.id);
         deleteBtn.addEventListener('click', () => {
-                console.log(`삭제 버튼 클릭 ${comment.id}`);
                 deleteComment(comment.id);
-            });
+        });
+
+        // 답글 버튼 바인딩
+        const replyBtn = clone.querySelector('.reply-btn');
+        replyBtn.setAttribute('data-comment-id', comment.id);
+        replyBtn.addEventListener('click', () => {
+           replyButtonClicked(replyInputContainer, comment.id);
+        });
 
         return clone;
     }
 
+    // 답글 조회용
     function createReplyElement(commentContainer, reply) {
         const template = document.getElementById('reply-template');
         const clone = template.content.cloneNode(true);
@@ -79,86 +88,118 @@ document.addEventListener("DOMContentLoaded", function () {
         const deleteBtn = clone.querySelector('.delete-btn');
         deleteBtn.setAttribute('data-comment-id', reply.id);
         deleteBtn.addEventListener('click', () => {
-                console.log(`삭제 버튼 클릭 ${reply.id}`);
-                deleteComment(comment.id);
-            });
+            deleteComment(comment.id);
+        });
 
         return clone;
     }
 
     // 댓글 새로고침 버튼 클릭 바인딩
     refreshButton.addEventListener("click", function () {
-        // console.log('새로고침');
         updateComments();
     });
 
     // 댓글 삭제 버튼 클릭 이벤트
     function deleteComment(commentId) {
-            if (!confirm('댓글을 삭제하시겠습니까?')) {
-                    return;
+        if (!confirm('댓글을 삭제하시겠습니까?')) {
+                return;
+            }
+
+        fetch('/posts/' + postId + '/comments/' + commentId, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if(!response.ok) {
+                    throw new Error('댓글 삭제 실패');
                 }
 
-            fetch('/posts/' + postId + '/comments/' + commentId, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if(!response.ok) {
-                        throw new Error('댓글 삭제 실패');
-                    }
+                updateComments();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
 
-                    updateComments();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+    // 답글 버튼 클릭 이벤트
+    function replyButtonClicked(replyContainer, commentId) {
+
+        if (commentButton == null) {
+            alert('회원 전용 기능입니다;');
+            return;
         }
 
+        const isVisible = replyContainer.hidden === false;
+        const commentElement = replyContainer.querySelector(".reply");
+
+        // 이미 답글 폼 열려잇으면 닫음
+        if(isVisible) {
+            replyContainer.hidden = true;
+            replySubmitButton.removeEventListener("click", handleSubmit);
+            return;
+        }
+
+        replyContainer.hidden = false;
+
+        // 답글 등록 버튼 바인딩
+        const userId = document.getElementById("userId").value;
+        const replySubmitButton = replyContainer.querySelector(".submitReply");
+
+        replySubmitButton.addEventListener("click", handleSubmit);
+
+        function handleSubmit() {
+            const commentText = commentElement.value.trim();
+            postComment(postId, commentText, userId, commentId, ()=> { commentElement.value = "";});
+        }
+    }
 
     // 비로그인회원
     if(commentButton == null) {
        return;
     }
 
-    // 댓글 작성 버튼 클릭 바인딩
+    // 댓글 등록 버튼 클릭 바인딩
     commentButton.addEventListener("click", function () {
-            //const parentId = document.getElementById("parentId").value;
+        const commentText = document.getElementById("comment").value.trim();
+        const userId = document.getElementById("userId").value;
 
-            const commentText = document.getElementById("comment").value.trim();
-            const userId = document.getElementById("userId").value;
+        postComment(postId, commentText, userId, null, ()=> { document.getElementById("comment").value = "";});
+    });
 
-            if (commentText === "") {
-                alert("댓글을 입력하세요!");
-                return;
-            }
+    function postComment(postId, commentText, userId, parentId, onUpdate) {
 
-            console.log("작성된 댓글:", commentText);
+       if (commentText === "") {
+           alert("댓글을 입력하세요!");
+           return;
+       }
 
-             const url = '/posts/' + postId + '/comments';  // POST 요청을 보낼 URL
-             const data = {
-                 postId: postId,
-                 content: commentText,
-                 userId: userId,
-                 parentId: parentId
-             };
-             fetch(url, {
-                      method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify(data)
-                  })
-                  .then(response => {
+       console.log("작성된 댓글:", commentText);
 
-                      if (!response.ok) {
-                          throw new Error('Request failed');
-                      }
-
-                      document.getElementById("comment").value = "";
-                      updateComments();
-                  })
-                  .catch(error => {
-                      console.error('Error:', error);
-                  });
-        });
+        const url = '/posts/' + postId + '/comments';  // POST 요청을 보낼 URL
+        const data = {
+            postId: postId,
+            content: commentText,
+            userId: userId,
+            parentId: parentId
+        };
+        fetch(url, {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(data)
+             })
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Request failed');
+                 }
+                 onUpdate();
+                updateComments();
+                 return true;
+             })
+             .catch(error => {
+                 console.error('Error:', error);
+                 return false;
+             });
+    }
 
 });

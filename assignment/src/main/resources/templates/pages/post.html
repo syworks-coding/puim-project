@@ -65,8 +65,14 @@
         <!-- 댓글 입력 폼 -->
         <div th:if="${user != null}" class="form-group mb-3">
             <label for="comment" th:text="${user.userId}">닉네임</label>
-            <textarea class="form-control" id="comment" rows="3"></textarea>
-            <button class="btn btn-primary mt-2" id="submitComment">등록</button>
+            <div class="row">
+                <div class="col-10">
+                    <textarea class="form-control" id="comment" rows="3"></textarea>
+                </div>
+                <div class="col-2 d-flex ">
+                    <button class="btn btn-primary mt-2" id="submitComment">등록</button>
+                </div>
+            </div>
         </div>
         <div th:if="${user == null}" class="mb-3">
             회원에게만 댓글 작성 권한이 있습니다.
@@ -92,6 +98,20 @@
                     </div>
                 </div>
 
+                 <!-- 대댓글 입력 -->
+                 <div class="ms-4 border-start ps-3">
+                     <div class="form-group mb-3">
+                         <label for="comment" th:text="${user.userId}">닉네임</label>
+                         <div class="row">
+                             <div class="col-10">
+                                 <textarea class="form-control" rows="3"></textarea>
+                             </div>
+                             <div class="col-2 d-flex ">
+                                 <button class="btn btn-primary mt-2">등록</button>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
 
                 <!-- 대댓글 -->
                 <div th:each="reply : ${comment.replies}">
@@ -134,6 +154,22 @@
             </div>
             <p class="card-text content"></p>
             <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
+        </div>
+    </div>
+
+    <div class="replyInputContainer" hidden>
+        <div class="ms-4 border-start ps-3">
+            <div class="form-group mb-3">
+                <div class="reply-visibility"></div>
+                <div class="row">
+                    <div class="col-10">
+                        <textarea class="form-control reply" rows="3"></textarea>
+                    </div>
+                    <div class="col-2 d-flex ">
+                        <button class="btn btn-primary mt-2 submitReply">등록</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
