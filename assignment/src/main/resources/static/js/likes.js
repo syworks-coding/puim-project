@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 likesCount.innerText = data.likeCount;
 
-                if(data.isLiked) {
+                if (data.isLiked) {
                     likesIcon.classList.remove('bi-heart');
                     likesIcon.classList.add('bi-heart-fill');
                 } else {
@@ -34,10 +34,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 좋아요 버튼 클릭 바인딩
-    likesButton.addEventListener("click", function() {
+    likesButton.addEventListener("click", function () {
 
         // 비로그인회원
-        if(userIdElement == null) {
+        if (userIdElement == null) {
             alert('회원 전용 기능입니다.');
         }
 
@@ -46,11 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const url = '/posts/' + postId + '/likes';
 
         fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Request failed');

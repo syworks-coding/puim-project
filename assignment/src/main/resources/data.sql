@@ -1,8 +1,13 @@
 -- User 테이블에 3명의 사용자 추가
-INSERT INTO users (user_id, user_pw) VALUES ('puim', '12');
-INSERT INTO users (user_id, user_pw) VALUES ('gildong', 'password1');
-INSERT INTO users (user_id, user_pw) VALUES ('cheolsu', 'password2');
-INSERT INTO users (user_id, user_pw) VALUES ('yeonghee', 'password3');
+-- INSERT INTO users (user_id, user_pw) VALUES ('puim', '12');
+INSERT INTO users (user_id, user_pw, authority)
+VALUES ('puim', '$2a$10$jHDY3ArQrZA9FoRQDOdXJeMdYSPYBC32cPQMwp6QFadUjrnVA3zrC', 'ROLE_USER'); -- 12
+INSERT INTO users (user_id, user_pw, authority)
+VALUES ('gildong', '$2a$10$I7fSXsO76rsw5czPrDlnWu2H1Xp3aPrND4lCBj18JJ6Bo.tijVz5.', 'ROLE_USER'); -- password1
+INSERT INTO users (user_id, user_pw, authority)
+VALUES ('cheolsu', '$2a$10$mj99zjrPhawK6dLJFb/GGe1m0DIHfVj4w0Hg/dxkwmNUtVmqUYypy', 'ROLE_USER'); -- password2
+INSERT INTO users (user_id, user_pw, authority)
+VALUES ('yeonghee', '$2a$10$J/v/YQOphoPptEtADVXdFurV6wF6GElgeRX25xcqacO6HnZm2JXtS', 'ROLE_USER'); -- password3
 
 -- Post 테이블에 20개의 게시글 추가
 -- 홍길동의 게시글

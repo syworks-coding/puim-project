@@ -41,7 +41,7 @@ public class UserController {
     public String createUser(@Validated @ModelAttribute UserCreateDTO userCreateDTO, BindingResult bindingResult) {
 
         // 중복 회원 검증
-        if(userService.canUseId(userCreateDTO.getUserId())) {
+        if(!userService.canUseId(userCreateDTO.getUserId())) {
             bindingResult.rejectValue("userId", "", "사용할 수 없는 아이디 입니다.");
         }
 
@@ -87,7 +87,7 @@ public class UserController {
         }
 
         // 비밀번호 확인 불일치
-        if(!userUpdateDTO.getOldPw().equals(user.getUserPw())) {
+        if(!userUpdateDTO.getOldPw().equals(user.getPassword())) {
             bindingResult.rejectValue("oldPw", "", "현재 비밀번호와 일치하지 않습니다.");
         } else if (!userUpdateDTO.idPasswordMatch()) {
             bindingResult.rejectValue("newPwCheck", "", "새 비밀번호와 일치하지 않습니다.");

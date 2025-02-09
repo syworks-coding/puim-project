@@ -27,7 +27,7 @@ public class LoginController {
     public String tryLogin(@Validated @ModelAttribute UserLoginDTO userLoginDTO,
                            BindingResult bindingResult, HttpSession session) {
 
-        User user = loginService.login(userLoginDTO.getUserId(), userLoginDTO.getUserPw());
+        User user = loginService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
 
         if(user == null) {
             bindingResult.reject("globalError", "아이디 또는 비밀번호가 일치하지 않습니다.");

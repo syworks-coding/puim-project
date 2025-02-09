@@ -7,9 +7,12 @@ import com.example.demo.post.dto.PostViewDTO;
 import com.example.demo.post.model.Post;
 import com.example.demo.post.service.PostService;
 import com.example.demo.user.model.User;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +67,8 @@ public class PostController {
     }
 
     @GetMapping(value = "/posts/add")
+    // @PreAuthorize("hasRole('USER')")
+    // @RolesAllowed({"ADMIN", "USER"})
     public String showAddPostPage(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         PostCreateDTO postCreateDTO = new PostCreateDTO();
@@ -76,6 +81,7 @@ public class PostController {
 
     // 게시글 작성
     @PostMapping("/posts")
+    // @PreAuthorize("hasRole('USER')")
     public String savePost(@ModelAttribute PostCreateDTO postCreateDTO, RedirectAttributes redirectAttributes, HttpSession session) {
 
         System.out.println("postCreateDTO = " + postCreateDTO);
@@ -95,6 +101,7 @@ public class PostController {
     // 게시글 수정
     // 접근 권한 필요
     @GetMapping(value = "/posts/{postId}/edit")
+    // @PreAuthorize("hasRole('USER') and #username == authentication.name")
     public String showEditPost(@PathVariable long postId, Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         model.addAttribute("user", user);
@@ -112,6 +119,7 @@ public class PostController {
     }
 
     @PostMapping("/posts/{postId}")
+    // @PreAuthorize("hasRole('USER') and #username == authentication.name")
     public String updatePost(@PathVariable long postId, @ModelAttribute PostUpdateDTO postUpdateDTO, RedirectAttributes redirectAttributes) {
         postService.updatePost(postId, postUpdateDTO);
 
