@@ -23,7 +23,7 @@
                 <div class="col-8 text-start">
                     <h4 class="h5 mb-3 fw-normal" th:text="${post.title}">게시물 제목입니다.</h4>
                 </div>
-                <div class="col-4 mb-3 text-end">
+                <div class="col-4 mb-3 text-end" th:if="${user != null && post.userId == user.id}">
                     <button th:onclick="|location.href='/posts/${post.id}/edit'|" type="button" class="btn btn-link">수정</button>
                     <button th:onclick="|location.href='/posts/${post.id}/delete'|" type="button" class="btn btn-link">삭제</button>
                 </div>
@@ -64,7 +64,7 @@
 
         <!-- 댓글 입력 폼 -->
         <div th:if="${user != null}" class="form-group mb-3">
-            <label for="comment" th:text="${user.userId}">닉네임</label>
+            <label for="comment" th:text="${user.username}">닉네임</label>
             <div class="row">
                 <div class="col-10">
                     <textarea class="form-control" id="comment" rows="3"></textarea>
@@ -101,7 +101,7 @@
                  <!-- 대댓글 입력 -->
                  <div class="ms-4 border-start ps-3">
                      <div class="form-group mb-3">
-                         <label for="comment" th:text="${user.userId}">닉네임</label>
+                         <label for="comment" th:text="${user.username}">닉네임</label>
                          <div class="row">
                              <div class="col-10">
                                  <textarea class="form-control" rows="3"></textarea>
@@ -141,13 +141,13 @@
 </div>
 
 <template id="comment-template">
-    <div class="card p-2 mb-2">
+    <div class="card p-2 mb-2 comment-container">
         <div class="card-body">
             <div class="row">
                 <div class="col-8 text-start">
                     <b class="username"></b>
                 </div>
-                <div class="col-4 text-end">
+                <div class="col-4 text-end commentEdit" hidden>
                     <button type="button" class="btn btn-link edit-btn">수정</button>
                     <button type="button" class="btn btn-link delete-btn">삭제</button>
                 </div>
@@ -174,15 +174,30 @@
     </div>
 </template>
 
+<template id="comment-edit-template">
+    <div class="card p-2 mb-2">
+        <label for="comment" class="username"></label>
+        <div class="row">
+            <div class="col-10">
+                <textarea class="form-control editContent" rows="3"></textarea>
+            </div>
+            <div class="col-2 d-flex ">
+                <button class="btn btn-primary mt-2 editCommentBtn">수정</button>
+                <button class="btn btn-secondary mt-2 cancelEditBtn" >취소</button>
+            </div>
+        </div>
+    </div>
+</template>
+
 <template id="reply-template">
     <div class="ms-4 border-start ps-3">
-        <div class="card p-2 mb-2">
+        <div class="card p-2 mb-2  reply-container">
             <div class="card-body">
                 <div class="row">
                     <div class="col-8 text-start">
                         <b class="username"></b>
                     </div>
-                    <div class="col-4 text-end">
+                    <div class="col-4 text-end replyEdit" hidden>
                         <button type="button" class="btn btn-link edit-btn">수정</button>
                         <button type="button" class="btn btn-link delete-btn">삭제</button>
                     </div>

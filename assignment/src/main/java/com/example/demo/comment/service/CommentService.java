@@ -47,6 +47,10 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
+    public Comment findByCommentId(long commentId) {
+        return commentRepository.findById(commentId).orElseThrow();
+    }
+
     public CommentResponseDTO findByPostId(long postId) {
         int totalCount = commentRepository.countByPostId(postId);
 
@@ -83,6 +87,7 @@ public class CommentService {
     private CommentViewDTO commentQueryDTOToCommentViewDTO(CommentQueryDTO commentQueryDTO) {
         CommentViewDTO commentViewDTO = new CommentViewDTO();
         commentViewDTO.setId(commentQueryDTO.getId());
+        commentViewDTO.setUserId(commentQueryDTO.getUserId());
         commentViewDTO.setPostId(commentQueryDTO.getPostId());
         commentViewDTO.setUsername(commentQueryDTO.getUserName());
         commentViewDTO.setContent(commentQueryDTO.getContent());
@@ -92,10 +97,9 @@ public class CommentService {
 
     public void updateComment(long id, CommentDTO commentDTO) {
 
-
-//        Comment findComment = commentRepository.findById(id).orElseThrow();
-//        findComment.setUsername(comment.getUsername());
-//        findComment.setContent(comment.getContent());
+        Comment findComment = commentRepository.findById(id).orElseThrow();
+        findComment.setContent(commentDTO.getContent());
+        commentRepository.save(findComment);
     }
 
     @Transactional

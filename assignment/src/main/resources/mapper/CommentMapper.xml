@@ -5,7 +5,7 @@
 
     <!-- 부모 댓글 조회 -->
     <select id="findParentCommentsByPostId" resultType="com.example.demo.comment.dto.CommentQueryDTO">
-        SELECT c.*, u.user_id AS userName
+        SELECT c.*, u.username, u.id AS userId
         FROM comment c
         LEFT JOIN users u ON c.user_id = u.id
         WHERE c.post_id = #{postId} AND c.parent_id IS NULL
@@ -14,7 +14,7 @@
 
     <!-- 대댓글 조회 -->
     <select id="findRepliesByParentId" resultType="com.example.demo.comment.dto.CommentQueryDTO">
-        SELECT c.*, u.user_id AS userName
+        SELECT c.*, u.username, u.id AS userId
         FROM comment c
         LEFT JOIN users u ON c.user_id = u.id
         WHERE c.parent_id = #{parentId}

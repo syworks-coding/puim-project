@@ -22,31 +22,31 @@
         <h1 class="h3 mb-3 fw-normal">회원가입</h1>
 
         <div class="form-floating">
-          <input type="text" class="form-control" id="id" placeholder="아이디 입력" th:field="*{userId}" th:errorclass="field-error">
-          <label for="id">아이디</label>
+          <input type="text" class="form-control" id="username" placeholder="아이디 입력" th:field="*{username}" th:errorclass="field-error">
+          <label for="username">아이디</label>
         </div>
-        <div class="field-error" th:errors="*{userId}">
+        <div class="field-error" th:errors="*{username}">
           아이디 유효성 에러
         </div>
 
         <div class="form-floating">
-          <input type="password" class="form-control" id="password" placeholder="Password" th:field="*{userPw}" th:errorclass="field-error">
+          <input type="password" class="form-control" id="password" placeholder="Password" th:field="*{password}" th:errorclass="field-error">
           <label for="password">비밀번호</label>
         </div>
-        <div class="field-error" th:errors="*{userPw}">
+        <div class="field-error" th:errors="*{password}">
           비밀번호 유효성 에러
         </div>
 
         <div class="form-floating">
-          <input type="password" class="form-control" id="passwordCheck" placeholder="Password" th:field="*{userPwCheck}" th:errorclass="field-error">
+          <input type="password" class="form-control" id="passwordCheck" placeholder="Password" th:field="*{passwordCheck}" th:errorclass="field-error">
           <label for="passwordCheck">비밀번호 확인</label>
         </div>
-        <div class="field-error" th:errors="*{userPwCheck}">
+        <div class="field-error" th:errors="*{passwordCheck}">
           비밀번호 불일치
         </div>
 
         <div class="mb-3"></div>
-        <button class="btn btn-primary w-100 py-2" type="submit">로그인</button>
+        <button class="btn btn-primary w-100 py-2" type="submit">회원가입</button>
       </form>
     </div>
   </div>

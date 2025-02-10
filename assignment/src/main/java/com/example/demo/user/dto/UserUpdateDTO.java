@@ -30,8 +30,4 @@ public class UserUpdateDTO {
     public boolean idPasswordMatch() {
         return newPw.equals(newPwCheck);
     }
-
-    public boolean idPasswordEqualsCurrent() {
-        return oldPw.equals(newPwCheck);
-    }
 }

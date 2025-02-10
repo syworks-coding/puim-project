@@ -7,15 +7,14 @@ import com.example.demo.user.dto.UserUpdateDTO;
 import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 @Service
 @RequiredArgsConstructor
@@ -24,29 +23,31 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final CommentService commentService;
     private final PostService postService;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public User saveUser(UserCreateDTO userCreateDTO) {
         User user = new User();
 
-        String encodedPassword = passwordEncoder.encode(userCreateDTO.getUserPw());
-        user.setUsername(userCreateDTO.getUserId());
+        String encodedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
+        user.setUsername(userCreateDTO.getUsername());
         user.setPassword(encodedPassword);
+        user.setAuthority("ROLE_USER");
 
         return userRepository.save(user);
     }
 
-    public String updateUser(long id, UserUpdateDTO userUpdateDTO) {
-        User user = userRepository.findById(id).orElseThrow();
+    public boolean equalsCurrent(long userId, String password) {
+        User findUser = userRepository.findById(userId).orElseThrow();
+        return passwordEncoder.matches(password, findUser.getPassword());
+    }
+
+    public void updateUser(long userId, UserUpdateDTO userUpdateDTO) {
+
+        User user = userRepository.findById(userId).orElseThrow();
         String encodedPassword = passwordEncoder.encode(userUpdateDTO.getNewPw());
-
-        if(userUpdateDTO.getOldPw().equals(user.getUsername())) {
-
-        }
 
         user.setPassword(encodedPassword);
         userRepository.save(user);
-        return null;
     }
 
     @Transactional

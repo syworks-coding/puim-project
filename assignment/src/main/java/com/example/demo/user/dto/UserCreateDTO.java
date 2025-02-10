@@ -13,19 +13,19 @@ public class UserCreateDTO {
     @NotNull
     @NotBlank
     @Size(min = 2, max = 16, message = "아이디는 2자 이상 16자 이하로 입력해주세요.")
-    private String userId;
+    private String username;
 
     @NotNull
     @NotBlank
     @Size(min = 2, max = 20, message = "비밀번호는 2자 이상 20자 이하로 입력해주세요.")
-    private String userPw;
+    private String password;
 
     @NotNull
     @NotBlank
     @Size(min = 2, max = 20, message = "비밀번호는 2자 이상 20자 이하로 입력해주세요.")
-    private String userPwCheck;
+    private String passwordCheck;
 
-    public boolean idPasswordMatch() {
-        return userPw.equals(userPwCheck);
+    public boolean passwordMatch() {
+        return password.equals(passwordCheck);
     }
 }

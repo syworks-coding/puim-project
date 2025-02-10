@@ -16,6 +16,9 @@ public class PostUpdateDTO {
     @NotNull
     private long id;
 
+    @NotNull
+    private long userId;
+
     @Size(min = 1, max = 40, message = "제목을 입력해주세요.")
     private String title;
 

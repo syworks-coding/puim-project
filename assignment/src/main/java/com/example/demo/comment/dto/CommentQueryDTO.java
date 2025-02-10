@@ -12,6 +12,7 @@ public class CommentQueryDTO {
     private String content;
     private long postId;
     private long parentId;
+    private long userId;
     private String userName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -96,9 +96,14 @@ public class PostService {
         postViewDTO.setTitle(post.getTitle());
         postViewDTO.setContent(post.getContent());
         postViewDTO.setCreatedAt(post.getCreatedAt());
-        postViewDTO.setUserId(post.getUser().getUsername());
+        postViewDTO.setUserId(post.getUser().getId());
+        postViewDTO.setUsername(post.getUser().getUsername());
         postViewDTO.setComments(commentViewDTOS);
 
         return postViewDTO;
+    }
+
+    public Long getUserIdByPostId(long postId) {
+        return postRepository.findById(postId).orElseThrow().getUser().getId();
     }
 }

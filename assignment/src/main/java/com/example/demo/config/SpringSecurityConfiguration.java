@@ -35,8 +35,7 @@ public class SpringSecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         authorizeRequests -> {
-                            authorizeRequests.requestMatchers("/**").authenticated();
-                            authorizeRequests.requestMatchers("login").permitAll();
+                            authorizeRequests.requestMatchers("/**").permitAll();
                             authorizeRequests.requestMatchers("/h2-console/**").permitAll();
                         })
                 .formLogin(login -> login
@@ -50,10 +49,7 @@ public class SpringSecurityConfiguration {
                 // h2 콘솔 확인
                 .headers(
                         headersConfigurer ->
-                                headersConfigurer
-                                        .frameOptions(
-                                                HeadersConfigurer.FrameOptionsConfig::sameOrigin
-                                        )
+                                headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 );
 
         return http.build();

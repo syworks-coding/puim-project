@@ -24,7 +24,8 @@ public class PostViewDTO {
 
     private LocalDateTime updatedAt;
 
-    private String userId;
+    private String username;
+    private long userId;
 
     private List<CommentViewDTO> comments = new ArrayList<>();
 }

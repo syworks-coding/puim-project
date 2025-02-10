@@ -6,12 +6,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const commentListContainer = document.getElementById("commentListContainer");
 
     const postId = document.getElementById("postId").value;
-    const userId = null;
     const parentId = null;
 
     updateComments();
 
     function updateComments() {
+        let userId = null;
+        if(commentButton != null) {
+            userId = Number(document.getElementById("userId").value);
+        }
+
         // 댓글 조회
         fetch('/posts/' + postId + '/comments')
             .then(response => {
@@ -33,13 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     const commentContainer = document.createElement('div');
 
-                    const commentElement = createCommentElement(comment);
+                    const commentElement = createCommentElement(comment, userId);
                     commentContainer.appendChild(commentElement);
 
                     comment.replies.forEach(reply => {
 
-                        const replyElement = createReplyElement(commentContainer, reply);
+                        const replyElement = createReplyElement(commentContainer, reply, userId);
                         commentContainer.appendChild(replyElement);
+
                     });
 
                     commentListContainer.appendChild(commentContainer);
@@ -50,46 +55,68 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    function createCommentElement(comment) {
+    function createCommentElement(comment, userId) {
         const template = document.getElementById('comment-template');
         const clone = template.content.cloneNode(true);
 
         const replyInputContainer = clone.querySelector('.replyInputContainer');
+
+        const commentContainer = clone.querySelector('.comment-container');
+        commentContainer.id = `comment-${comment.id}`;
 
         clone.querySelector('.username').textContent = comment.username;
         clone.querySelector('.content').textContent = comment.content;
 
         // 삭제 버튼 바인딩
         const deleteBtn = clone.querySelector('.delete-btn');
-        deleteBtn.setAttribute('data-comment-id', comment.id);
         deleteBtn.addEventListener('click', () => {
             deleteComment(comment.id);
         });
 
+        // 수정 버튼 바인딩
+        const editBtn = clone.querySelector('.edit-btn');
+        editBtn.setAttribute('data-comment-id', comment.id);
+        editBtn.addEventListener('click', () => {
+            editComment(comment);
+        });
+
         // 답글 버튼 바인딩
         const replyBtn = clone.querySelector('.reply-btn');
-        replyBtn.setAttribute('data-comment-id', comment.id);
         replyBtn.addEventListener('click', () => {
             replyButtonClicked(replyInputContainer, comment.id);
         });
+
+        clone.querySelector(".commentEdit").hidden = comment.userId !== userId;
 
         return clone;
     }
 
     // 답글 조회용
-    function createReplyElement(commentContainer, reply) {
+    function createReplyElement(commentContainer, reply, userId) {
         const template = document.getElementById('reply-template');
         const clone = template.content.cloneNode(true);
 
         clone.querySelector('.username').textContent = reply.username;
         clone.querySelector('.content').textContent = reply.content;
 
+        const replyContainer = clone.querySelector('.reply-container');
+        replyContainer.id = `comment-${reply.id}`;
+
         // 삭제 버튼 바인딩
         const deleteBtn = clone.querySelector('.delete-btn');
         deleteBtn.setAttribute('data-comment-id', reply.id);
         deleteBtn.addEventListener('click', () => {
-            deleteComment(comment.id);
+            deleteComment(reply.id);
         });
+
+        // 수정 버튼 바인딩
+        const editBtn = clone.querySelector('.edit-btn');
+        editBtn.setAttribute('data-comment-id', reply.id);
+        editBtn.addEventListener('click', () => {
+            editComment(reply);
+        });
+
+        clone.querySelector(".replyEdit").hidden = reply.userId !== userId;
 
         return clone;
     }
@@ -118,6 +145,44 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => {
                 console.error('Error:', error);
             });
+    }
+
+    // 댓글 수정 버튼 클릭 이벤트
+    function editComment(comment) {
+
+        // 해당 댓글 입력 폼으로 바뀜
+        const commentDiv = document.getElementById(`comment-${comment.id}`);
+
+        const commentHTML = commentDiv.innerHTML;
+
+        // 수정 폼으로 변경
+        commentDiv.innerHTML = ``;
+        const editElement = createEditCommentElement(comment);
+
+        // 수정 버튼 바인딩
+        const editBtn = editElement.querySelector('.editCommentBtn');
+        const editTextElement = editElement.querySelector('.editContent');
+        editBtn.addEventListener("click", function() {
+            patchComment(postId, comment.id, editTextElement.value.trim());
+        });
+
+        // 취소 버튼 바인딩
+        const cancelEditBtn = editElement.querySelector('.cancelEditBtn');
+        cancelEditBtn.addEventListener("click", function() {
+            commentDiv.innerHTML = commentHTML;
+        });
+
+        commentDiv.appendChild(editElement);
+    }
+
+    function createEditCommentElement(comment) {
+        const template = document.getElementById('comment-edit-template');
+        const clone = template.content.cloneNode(true);
+
+        clone.querySelector('.username').textContent = comment.username;
+        clone.querySelector('.editContent').textContent = comment.content;
+
+        return clone;
     }
 
     // 답글 버튼 클릭 이벤트
@@ -206,4 +271,31 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    function patchComment(postId, commentId, content) {
+        if (content === "") {
+            alert("댓글을 입력하세요!");
+            return;
+        }
+
+        const url = '/posts/' + postId + '/comments/' + commentId;
+        const data = {
+            content: content,
+        };
+        fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
+                updateComments();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
 });

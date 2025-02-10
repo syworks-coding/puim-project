@@ -13,7 +13,7 @@
     <div class="card justify-content-center" style="width: 18rem;">
       <div class="card-body">
         <h5 class="card-title">회원정보</h5>
-        <p class="card-text">아이디: <span th:text="${user.userId}">아이디</span></p>
+        <p class="card-text">아이디: <span th:text="${user.username}">아이디</span></p>
         <a href="/users/change-password" class="card-link">비밀번호 변경</a>
         <a href="/users/delete" class="card-link">회원탈퇴</a>
       </div>

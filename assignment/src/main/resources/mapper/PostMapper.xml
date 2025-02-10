@@ -5,7 +5,7 @@
 
     <select id="findPostInfoById" resultType="com.example.demo.post.dto.PostPreviewDTO">
         SELECT p.id, p.title, p.created_at,
-            u.user_id AS userName,
+            u.username,
             count(DISTINCT c.id) AS comments,
             count(DISTINCT l.id) AS likes
         FROM post p

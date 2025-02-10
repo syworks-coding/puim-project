@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "users")
+@ToString
 public class User implements UserDetails {
 
     @Id
@@ -21,11 +22,10 @@ public class User implements UserDetails {
     private long id;
 
     @NotNull
-    @Column(unique = true, name = "user_id")
+    @Column(unique = true)
     private String username;
 
     @NotNull
-    @Column(name = "user_pw")
     private String password;
 
     private String authority;

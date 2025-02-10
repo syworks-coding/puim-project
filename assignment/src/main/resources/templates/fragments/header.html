@@ -18,7 +18,7 @@
             <ul th:if="${user != null}" class="nav nav-pills">
                 <li class="nav-item"><a href="/posts/add" class="nav-link active" aria-current="page">글쓰기</a></li>
                 <li class="nav-item"><a href="/logout" class="nav-link">로그아웃</a></li>
-                <li class="nav-item"><a href="/users/settings" class="nav-link"><span th:text="${user.userId}"></span> 님</a></li>
+                <li class="nav-item"><a href="/users/settings" class="nav-link"><span th:text="${user.username}"></span> 님</a></li>
             </ul>
         </header>
     </div>
