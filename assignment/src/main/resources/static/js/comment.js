@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+
     const commentButton = document.getElementById("submitComment");
     const refreshButton = document.getElementById("refreshComment");
     const commentCountsElement = document.getElementById("commentsCount");
@@ -68,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
         clone.querySelector('.content').textContent = comment.content;
 
         clone.querySelector('.createdAt').textContent = comment.createdAt;
-        if(comment.updatedAt != null) {
+        if(comment.updatedAt != null && comment.createdAt != comment.updatedAt) {
             clone.querySelector('.updatedAt').textContent = ' / ' + comment.updatedAt + ' 수정';
         }
 
@@ -105,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
         clone.querySelector('.content').textContent = reply.content;
         clone.querySelector('.createdAt').textContent = reply.createdAt;
 
-        if(reply.updatedAt != null) {
+        if(reply.updatedAt != null && reply.createdAt != reply.updatedAt) {
             clone.querySelector('.updatedAt').textContent = ' / ' + reply.updatedAt + ' 수정';
         }
 
@@ -143,7 +145,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         fetch('/posts/' + postId + '/comments/' + commentId, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
         })
             .then(response => {
                 if (!response.ok) {
@@ -263,7 +268,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             },
             body: JSON.stringify(data)
         })
@@ -294,7 +300,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(url, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             },
             body: JSON.stringify(data)
             })

@@ -32,7 +32,6 @@ public class SpringSecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         authorizeRequests -> {
                             authorizeRequests.requestMatchers("/**").permitAll();
@@ -46,6 +45,9 @@ public class SpringSecurityConfiguration {
                         .permitAll()
                 )
                 .formLogin(withDefaults())
+                .sessionManagement( session ->
+                        session.maximumSessions(1) // 사용자당 최대 세션 수 1로 제한
+                )
                 // h2 콘솔 확인
                 .headers(
                         headersConfigurer ->
@@ -53,16 +55,6 @@ public class SpringSecurityConfiguration {
                 );
 
         return http.build();
-//
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(
-//                        authorizeRequests -> {
-//                            // authorizeRequests.requestMatchers("/**").permitAll();
-//                            authorizeRequests.requestMatchers("/h2-console/**").permitAll();
-//                        })
-//                .formLogin(withDefaults());
-//        return http.build();
     }
 
     @Bean

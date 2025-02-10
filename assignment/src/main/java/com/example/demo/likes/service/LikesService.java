@@ -31,7 +31,7 @@ public class LikesService {
         return likesRepository.findByPostIdAndUserId(postId, userId).isPresent();
     }
 
-    @Transactional // 이걸 여기다 붙여도 되는게 맞나
+    @Transactional
     public void toggleLikes(long postId, long userId) {
 
         // 삭제

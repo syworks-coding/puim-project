@@ -28,6 +28,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public Comment createComment(CommentDTO commentDTO) {
 
         Post post = postRepository.findById(commentDTO.getPostId()).orElseThrow();
@@ -96,6 +97,7 @@ public class CommentService {
         return commentViewDTO;
     }
 
+    @Transactional
     public void updateComment(long id, CommentDTO commentDTO) {
 
         Comment findComment = commentRepository.findById(id).orElseThrow();

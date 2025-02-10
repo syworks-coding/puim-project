@@ -25,6 +25,7 @@ public class UserService implements UserDetailsService {
     private final PostService postService;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    @Transactional
     public User saveUser(UserCreateDTO userCreateDTO) {
         User user = new User();
 
@@ -41,6 +42,7 @@ public class UserService implements UserDetailsService {
         return passwordEncoder.matches(password, findUser.getPassword());
     }
 
+    @Transactional
     public void updateUser(long userId, UserUpdateDTO userUpdateDTO) {
 
         User user = userRepository.findById(userId).orElseThrow();

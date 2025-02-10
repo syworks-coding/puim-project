@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+
     const likesButton = document.getElementById("likesButton");
     const likesCount = document.getElementById("likesCount");
     const likesIcon = document.getElementById("likesIcon");
@@ -39,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // 비로그인회원
         if (userIdElement == null) {
             alert('회원 전용 기능입니다.');
+            return;
         }
 
         const userId = userIdElement.value;
@@ -48,7 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             },
         })
             .then(response => {

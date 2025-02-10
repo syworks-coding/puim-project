@@ -49,6 +49,7 @@ public class PostService {
     }
 
 
+    @Transactional
     public Post savePost(PostCreateDTO postCreateDTO) {
         Post post = new Post();
         User user = userRepository.findById(postCreateDTO.getUserId()).orElseThrow();
@@ -60,6 +61,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    @Transactional
     public void updatePost(long postId, PostUpdateDTO postUpdateDTO) {
         Post post = postRepository.findById(postId).orElseThrow();
 
