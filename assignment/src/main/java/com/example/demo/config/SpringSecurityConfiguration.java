@@ -52,6 +52,9 @@ public class SpringSecurityConfiguration {
                 .headers(
                         headersConfigurer ->
                                 headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/h2-console/**")  // H2 콘솔에 대한 CSRF 보호를 비활성화
                 );
 
         return http.build();
