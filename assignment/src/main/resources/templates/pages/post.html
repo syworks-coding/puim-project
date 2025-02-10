@@ -21,6 +21,10 @@
         <div class="form-group mt-3">
             <div class="row">
                 <div class="col-8 text-start">
+                    <div class="mb-2">
+                        <small th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}">0000-00-00 00:00:00</small>
+                        <small th:if="${post.updatedAt != null}" th:text="' / ' + ${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm:ss')} + ' 수정'"></small>
+                    </div>
                     <h4 class="h5 mb-3 fw-normal" th:text="${post.title}">게시물 제목입니다.</h4>
                 </div>
                 <div class="col-4 mb-3 text-end" th:if="${user != null && post.userId == user.id}">
@@ -79,61 +83,7 @@
         </div>
 
         <div id="commentListContainer"></div>
-        <div >
-             <div th:each="comment : ${commentList}">
-                <!-- 기본 댓글 -->
-                <div class="card p-2 mb-2">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-8 text-start">
-                                <b th:text="${comment.username}">닉네임</b>
-                            </div>
-                            <div class="col-4 text-end">
-                                <button type="button" class="btn btn-link">수정</button>
-                                <button type="button" class="btn btn-link">삭제</button>
-                            </div>
-                        </div>
-                        <p class="card-text" th:text="${comment.content}">댓글 내용이 들어갑니다.</p>
-                        <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
-                    </div>
-                </div>
 
-                 <!-- 대댓글 입력 -->
-                 <div class="ms-4 border-start ps-3">
-                     <div class="form-group mb-3">
-                         <label for="comment" th:text="${user.username}">닉네임</label>
-                         <div class="row">
-                             <div class="col-10">
-                                 <textarea class="form-control" rows="3"></textarea>
-                             </div>
-                             <div class="col-2 d-flex ">
-                                 <button class="btn btn-primary mt-2">등록</button>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-
-                <!-- 대댓글 -->
-                <div th:each="reply : ${comment.replies}">
-                    <div class="ms-4 border-start ps-3">
-                        <div class="card p-2 mb-2">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-8 text-start">
-                                        <b th:text="${comment.username}">닉네임</b>
-                                    </div>
-                                    <div class="col-4 text-end">
-                                        <button type="button" class="btn btn-link">수정</button>
-                                        <button type="button" class="btn btn-link">삭제</button>
-                                    </div>
-                                </div>
-                                <p class="card-text" th:text="${comment.content}">대댓글 내용이 들어갑니다.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
         </div>
     </div>
 
@@ -145,6 +95,10 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-8 text-start">
+                    <div>
+                        <small class="createdAt"></small>
+                        <small class="updatedAt"></small>
+                    </div>
                     <b class="username"></b>
                 </div>
                 <div class="col-4 text-end commentEdit" hidden>
@@ -195,6 +149,10 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-8 text-start">
+                        <div>
+                            <small class="createdAt"></small>
+                            <small class="updatedAt"></small>
+                        </div>
                         <b class="username"></b>
                     </div>
                     <div class="col-4 text-end replyEdit" hidden>

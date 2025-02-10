@@ -1,5 +1,4 @@
--- User 테이블에 3명의 사용자 추가
--- INSERT INTO users (username, password) VALUES ('puim', '12');
+-- User 테이블에 사용자 추가
 INSERT INTO users (username, password, authority)
 VALUES ('puim', '$2a$10$jHDY3ArQrZA9FoRQDOdXJeMdYSPYBC32cPQMwp6QFadUjrnVA3zrC', 'ROLE_USER'); -- 12
 INSERT INTO users (username, password, authority)

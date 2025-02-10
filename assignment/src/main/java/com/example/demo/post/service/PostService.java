@@ -96,6 +96,7 @@ public class PostService {
         postViewDTO.setTitle(post.getTitle());
         postViewDTO.setContent(post.getContent());
         postViewDTO.setCreatedAt(post.getCreatedAt());
+        postViewDTO.setUpdatedAt(post.getUpdatedAt());
         postViewDTO.setUserId(post.getUser().getId());
         postViewDTO.setUsername(post.getUser().getUsername());
         postViewDTO.setComments(commentViewDTOS);

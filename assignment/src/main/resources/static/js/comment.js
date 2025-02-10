@@ -67,6 +67,11 @@ document.addEventListener("DOMContentLoaded", function () {
         clone.querySelector('.username').textContent = comment.username;
         clone.querySelector('.content').textContent = comment.content;
 
+        clone.querySelector('.createdAt').textContent = comment.createdAt;
+        if(comment.updatedAt != null) {
+            clone.querySelector('.updatedAt').textContent = ' / ' + comment.updatedAt + ' 수정';
+        }
+
         // 삭제 버튼 바인딩
         const deleteBtn = clone.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', () => {
@@ -98,6 +103,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         clone.querySelector('.username').textContent = reply.username;
         clone.querySelector('.content').textContent = reply.content;
+        clone.querySelector('.createdAt').textContent = reply.createdAt;
+
+        if(reply.updatedAt != null) {
+            clone.querySelector('.updatedAt').textContent = ' / ' + reply.updatedAt + ' 수정';
+        }
 
         const replyContainer = clone.querySelector('.reply-container');
         replyContainer.id = `comment-${reply.id}`;

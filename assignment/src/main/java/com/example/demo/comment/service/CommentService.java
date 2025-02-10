@@ -92,6 +92,7 @@ public class CommentService {
         commentViewDTO.setUsername(commentQueryDTO.getUserName());
         commentViewDTO.setContent(commentQueryDTO.getContent());
         commentViewDTO.setCreatedAt(commentQueryDTO.getCreatedAt());
+        commentViewDTO.setUpdatedAt(commentQueryDTO.getUpdatedAt());
         return commentViewDTO;
     }
 
