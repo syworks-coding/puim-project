@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const replyBtn = commentDiv.querySelector('.reply-btn');
             if(replyBtn != null) {
                 replyBtn.addEventListener('click', () => {
-                    replyButtonClicked(replyInputContainer, comment.id);
+                    replyButtonClicked(commentDiv.querySelector('.replyInputContainer'), comment.id);
                 });
             }
         });
