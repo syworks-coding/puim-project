@@ -185,6 +185,27 @@ document.addEventListener("DOMContentLoaded", function () {
         const cancelEditBtn = editElement.querySelector('.cancelEditBtn');
         cancelEditBtn.addEventListener("click", function() {
             commentDiv.innerHTML = commentHTML;
+
+            // 삭제 버튼 바인딩
+            const deleteBtn = commentDiv.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', () => {
+                deleteComment(comment.id);
+            });
+
+            // 수정 버튼 바인딩
+            const editBtn = commentDiv.querySelector('.edit-btn');
+            editBtn.setAttribute('data-comment-id', comment.id);
+            editBtn.addEventListener('click', () => {
+                editComment(comment);
+            });
+
+            // 답글 버튼 바인딩
+            const replyBtn = commentDiv.querySelector('.reply-btn');
+            if(replyBtn != null) {
+                replyBtn.addEventListener('click', () => {
+                    replyButtonClicked(replyInputContainer, comment.id);
+                });
+            }
         });
 
         commentDiv.appendChild(editElement);
