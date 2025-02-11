@@ -1,6 +1,7 @@
 package com.example.demo.user.service;
 
 import com.example.demo.comment.service.CommentService;
+import com.example.demo.likes.service.LikesService;
 import com.example.demo.post.service.PostService;
 import com.example.demo.user.dto.UserCreateDTO;
 import com.example.demo.user.dto.UserUpdateDTO;
@@ -23,6 +24,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final CommentService commentService;
     private final PostService postService;
+    private final LikesService likesService;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
@@ -54,6 +56,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void deleteUserById(long id) {
+        likesService.deleteByUserId(id);
         postService.deletePostsByUserId(id);
         commentService.deleteByUserId(id);
         userRepository.deleteById(id);

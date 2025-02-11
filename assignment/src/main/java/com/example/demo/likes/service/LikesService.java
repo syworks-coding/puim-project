@@ -32,6 +32,14 @@ public class LikesService {
     }
 
     @Transactional
+    public void deleteByUserId(long userId) {
+        List<Likes> byUserId = likesRepository.findByUserId(userId);
+        for (Likes likes : byUserId) {
+            likesRepository.delete(likes);
+        }
+    }
+
+    @Transactional
     public void toggleLikes(long postId, long userId) {
 
         // 삭제
