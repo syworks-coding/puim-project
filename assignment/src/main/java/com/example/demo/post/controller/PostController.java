@@ -10,6 +10,7 @@ import com.example.demo.user.model.User;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
@@ -101,6 +102,10 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     public String showEditPost(@PathVariable long postId, Model model, HttpSession session) throws AuthenticationException {
         SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
+        if(securityContext == null) {
+            throw new AccessDeniedException("권한이 없습니다");
+        }
+
         User user = (User) securityContext.getAuthentication().getPrincipal();
         model.addAttribute("user", user);
 
@@ -108,7 +113,7 @@ public class PostController {
         long userId = findPost.getUser().getId();
 
         if(userId != user.getId()) {
-            throw new AuthenticationException();
+            throw new AccessDeniedException("권한이 없습니다");
         }
 
         PostUpdateDTO postUpdateDTO = new PostUpdateDTO();
@@ -141,7 +146,7 @@ public class PostController {
 
         Post post = postService.findById(postId);
         if(post.getUser().getId() != user.getId()) {
-            throw new AuthenticationException();
+            throw new AccessDeniedException("권한이 없습니다");
         }
 
         postService.deletePostById(postId) ;

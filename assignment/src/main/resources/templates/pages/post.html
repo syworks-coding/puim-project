@@ -23,7 +23,7 @@
                 <div class="col-8 text-start">
                     <div class="mb-2">
                         <small th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}">0000-00-00 00:00:00</small>
-                        <small th:if="${post.updatedAt != null && post.createdAt != post.updatedAt}" th:text="' / ' + ${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm:ss')} + ' 수정'"></small>
+                        <small th:if="${post.updatedAt != null && post.updatedAt.isAfter(post.createdAt)}" th:text="' / ' + ${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm:ss')} + ' 수정'"></small>
                     </div>
                     <h4 class="h5 mb-3 fw-normal" th:text="${post.title}">게시물 제목입니다.</h4>
                 </div>

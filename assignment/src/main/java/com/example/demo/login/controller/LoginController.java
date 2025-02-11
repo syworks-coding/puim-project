@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,12 +65,13 @@ public class LoginController {
     public String logout(HttpSession session,
                          @RequestHeader(value = "Referer", required = false) String referer ) throws AccessDeniedException {
 
-        User user = (User) session.getAttribute("user");
+        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
+        User user = (User) securityContext.getAuthentication().getPrincipal();
         if(user == null) {
             throw new AccessDeniedException("잘못된 접근입니다.");
         }
 
-        session.setAttribute("user", null);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", null);
 
         return "redirect:" + (referer == null ? "/" : referer);
     }

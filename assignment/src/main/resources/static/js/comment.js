@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
         clone.querySelector('.content').textContent = comment.content;
 
         clone.querySelector('.createdAt').textContent = comment.createdAt;
-        if(comment.updatedAt != null && comment.createdAt != comment.updatedAt) {
+        if(comment.updatedAt != null && new Date(comment.createdAt) < new Date(comment.updatedAt)) {
             clone.querySelector('.updatedAt').textContent = ' / ' + comment.updatedAt + ' 수정';
         }
 
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
         clone.querySelector('.content').textContent = reply.content;
         clone.querySelector('.createdAt').textContent = reply.createdAt;
 
-        if(reply.updatedAt != null && reply.createdAt != reply.updatedAt) {
+        if(reply.updatedAt != null && new Date(reply.createdAt) < new Date(reply.updatedAt)) {
             clone.querySelector('.updatedAt').textContent = ' / ' + reply.updatedAt + ' 수정';
         }
 

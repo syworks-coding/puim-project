@@ -2,6 +2,7 @@ package com.example.demo.post.service;
 
 import com.example.demo.comment.dto.CommentViewDTO;
 import com.example.demo.comment.service.CommentService;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.likes.service.LikesService;
 import com.example.demo.mapper.PostMapper;
 import com.example.demo.post.dto.*;
@@ -63,7 +64,7 @@ public class PostService {
 
     @Transactional
     public void updatePost(long postId, PostUpdateDTO postUpdateDTO) {
-        Post post = postRepository.findById(postId).orElseThrow();
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 게시글 입니다."));
 
         post.setTitle(postUpdateDTO.getTitle());
         post.setContent(postUpdateDTO.getContent());
@@ -89,7 +90,7 @@ public class PostService {
 
     public PostViewDTO getPostViewDTO(long postId) {
 
-        Post post = postRepository.findById(postId).orElseThrow();
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 게시글 입니다."));
         List<CommentViewDTO> commentViewDTOS = commentService.findCommentViewDTOS(postId);
 
         PostViewDTO postViewDTO = new PostViewDTO();

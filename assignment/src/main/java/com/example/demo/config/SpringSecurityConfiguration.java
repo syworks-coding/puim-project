@@ -44,7 +44,13 @@ public class SpringSecurityConfiguration {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
-                .formLogin(withDefaults())
+//                .logout(logout -> logout
+//                        .logoutUrl("/logout")  // 로그아웃 URL 설정
+//                        .logoutSuccessUrl("/login?logout=true")  // 로그아웃 성공 시 리다이렉트할 URL
+//                        .invalidateHttpSession(true)  // 세션 무효화
+//                        .deleteCookies("JSESSIONID")  // JSESSIONID 쿠키 삭제
+//                        .permitAll()
+//                )
                 .sessionManagement( session ->
                         session.maximumSessions(1) // 사용자당 최대 세션 수 1로 제한
                 )
@@ -52,8 +58,7 @@ public class SpringSecurityConfiguration {
                 .headers(
                         headersConfigurer ->
                                 headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-                )
-                .csrf(csrf -> csrf
+                ).csrf(csrf -> csrf
                         .ignoringRequestMatchers("/h2-console/**")  // H2 콘솔에 대한 CSRF 보호를 비활성화
                 );
 
