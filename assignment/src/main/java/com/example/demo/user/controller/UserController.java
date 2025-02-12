@@ -4,6 +4,10 @@ import com.example.demo.user.dto.UserCreateDTO;
 import com.example.demo.user.dto.UserUpdateDTO;
 import com.example.demo.user.model.User;
 import com.example.demo.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,6 +33,14 @@ public class UserController {
     private final UserService userService;
 
     // 회원 추가
+    @Operation(
+            summary = "회원가입 페이지 조회",
+            description = "회원가입 화면을 렌더링합니다. 이미 로그인한 사용자는 홈 화면('/')으로 리디렉션됩니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원가입 페이지 정상 반환"),
+            @ApiResponse(responseCode = "302", description = "이미 로그인된 경우 홈으로 리디렉션")
+    })
     @GetMapping("/join")
     public String showJoinPage(HttpSession session, Model model) {
 
@@ -43,6 +55,14 @@ public class UserController {
         return "join";
     }
 
+    @Operation(
+            summary = "회원 가입",
+            description = "사용자가 입력한 정보로 회원을 생성합니다. 입력값이 유효하지 않거나, 아이디 중복/비밀번호 불일치가 발생하면 다시 회원가입 페이지로 돌아갑니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "302", description = "회원가입 성공 후 홈('/')으로 리디렉션"),
+            @ApiResponse(responseCode = "400", description = "입력값 검증 실패 - 회원가입 페이지 다시 표시")
+    })
     @PostMapping("/users")
     public String createUser(@Validated @ModelAttribute UserCreateDTO userCreateDTO, BindingResult bindingResult) {
 
@@ -66,6 +86,16 @@ public class UserController {
     }
 
     // 회원 수정
+    @Operation(
+            summary = "비밀번호 변경 페이지 조회",
+            description = "현재 로그인한 사용자의 비밀번호 변경 페이지를 렌더링합니다. 접근 가능한 권한: ADMIN, USER",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "비밀번호 변경 페이지 정상 반환"),
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
+    })
     @GetMapping("/users/change-password")
     @RolesAllowed({"ADMIN", "USER"})
     public String showEditUserPage(HttpSession session, Model model) {
@@ -85,6 +115,17 @@ public class UserController {
         return "edit-user";
     }
 
+    @Operation(
+            summary = "사용자 비밀번호 변경",
+            description = "사용자가 현재 비밀번호와 새 비밀번호를 입력하여 비밀번호를 변경합니다. 권한: ADMIN, USER",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "302", description = "비밀번호 변경 성공 후 설정 페이지로 리디렉션"),
+            @ApiResponse(responseCode = "400", description = "비밀번호 확인 불일치 또는 유효성 오류"),
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
+    })
     @PostMapping("/users/edit")
     @RolesAllowed({"ADMIN", "USER"})
     public String editUser(@Validated @ModelAttribute UserUpdateDTO userUpdateDTO,
@@ -116,6 +157,16 @@ public class UserController {
     }
 
     // 회원 삭제
+    @Operation(
+            summary = "회원 탈퇴",
+            description = "로그인한 사용자가 회원 탈퇴를 수행합니다. 탈퇴 후에는 로그아웃이 이루어지고, 홈 페이지로 리디렉션됩니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "302", description = "회원 탈퇴 후 홈 페이지로 리디렉션"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음"),
+            @ApiResponse(responseCode = "403", description = "권한 없음")
+    })
     @GetMapping("/users/delete")
     @RolesAllowed({"ADMIN", "USER"})
     public String deleteUser(HttpSession session,
@@ -141,6 +192,16 @@ public class UserController {
         return "redirect:/";
     }
 
+    @Operation(
+            summary = "사용자 설정 페이지 조회",
+            description = "로그인한 사용자의 설정 페이지를 조회합니다. 권한: ADMIN, USER",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사용자 설정 페이지 정상 반환"),
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
+    })
     @GetMapping("/users/settings")
     @RolesAllowed({"ADMIN", "USER"})
     public String showUserSettingsPage(HttpSession session, Model model) {

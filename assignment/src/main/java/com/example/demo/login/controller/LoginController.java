@@ -4,6 +4,10 @@ import com.example.demo.login.service.LoginService;
 import com.example.demo.user.dto.UserCreateDTO;
 import com.example.demo.user.dto.UserLoginDTO;
 import com.example.demo.user.model.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -24,27 +28,16 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    @PostMapping("/login")
-    public String tryLogin(@Validated @ModelAttribute UserLoginDTO userLoginDTO,
-                           BindingResult bindingResult, HttpSession session) {
-
-        User user = loginService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
-
-        if(user == null) {
-            bindingResult.reject("globalError", "아이디 또는 비밀번호가 일치하지 않습니다.");
-        }
-
-        if(bindingResult.hasErrors()) {
-            return "login";
-        }
-
-        session.setAttribute("user", user);
-        String referer = (String) session.getAttribute("referer");
-
-        return "redirect:" + (referer == null ? "/" : referer);
-    }
-
-    @GetMapping(value = "/login")
+    @Operation(
+            summary = "로그인 페이지",
+            description = "로그인 페이지를 표시합니다. 이미 로그인된 경우, 이전 페이지로 리다이렉트 됩니다.",
+            security = @SecurityRequirement(name = "bearerAuth") // 필요한 경우 인증 요구 사항 추가
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 페이지 조회 성공"),
+            @ApiResponse(responseCode = "302", description = "로그인된 경우 리다이렉트")
+    })
+    @GetMapping("/login")
     public String showLoginPage(HttpSession session, Model model,
                                 @RequestHeader(value = "Referer", required = false) String referer) {
 
@@ -61,6 +54,15 @@ public class LoginController {
         return "login";
     }
 
+    @Operation(
+            summary = "로그아웃",
+            description = "사용자를 로그아웃 시키고 세션을 초기화합니다. 로그아웃 후 이전 페이지로 리다이렉트하거나 홈 페이지로 리다이렉트됩니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+            @ApiResponse(responseCode = "403", description = "잘못된 접근")
+    })
     @GetMapping("/logout")
     public String logout(HttpSession session,
                          @RequestHeader(value = "Referer", required = false) String referer ) throws AccessDeniedException {
