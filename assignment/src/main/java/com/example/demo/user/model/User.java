@@ -28,8 +28,6 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
-    private String authority;
-
     // ~ UserDetails ~
 
     @Override

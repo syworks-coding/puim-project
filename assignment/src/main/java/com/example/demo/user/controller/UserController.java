@@ -8,13 +8,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -23,8 +24,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -97,14 +96,10 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
     })
     @GetMapping("/users/change-password")
-    @RolesAllowed({"ADMIN", "USER"})
-    public String showEditUserPage(HttpSession session, Model model) {
-
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
-
+    @PreAuthorize("isAuthenticated()")
+    public String showEditUserPage(@AuthenticationPrincipal User user, Model model) {
         if(user == null) {
-            throw new NoSuchElementException();
+            throw new AccessDeniedException("권한이 없습니다");
         }
 
         UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
@@ -127,14 +122,12 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
     })
     @PostMapping("/users/edit")
-    @RolesAllowed({"ADMIN", "USER"})
+    @PreAuthorize("isAuthenticated()")
     public String editUser(@Validated @ModelAttribute UserUpdateDTO userUpdateDTO,
                            BindingResult bindingResult,
-                           HttpSession session) {
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
-        if (user == null) {
-            throw new NoSuchElementException();
+                           @AuthenticationPrincipal User user) {
+        if(user == null) {
+            throw new AccessDeniedException("권한이 없습니다");
         }
 
         // 비밀번호 확인 불일치
@@ -168,7 +161,7 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
     @GetMapping("/users/delete")
-    @RolesAllowed({"ADMIN", "USER"})
+    @PreAuthorize("isAuthenticated()")
     public String deleteUser(HttpSession session,
                              RedirectAttributes redirectAttributes,
                              HttpServletRequest request,
@@ -183,7 +176,7 @@ public class UserController {
         }
 
         if(user == null) {
-            throw new NoSuchElementException();
+            throw new AccessDeniedException("권한이 없습니다");
         }
 
         userService.deleteUserById(user.getId());
@@ -203,15 +196,11 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
     })
     @GetMapping("/users/settings")
-    @RolesAllowed({"ADMIN", "USER"})
-    public String showUserSettingsPage(HttpSession session, Model model) {
-
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
+    @PreAuthorize("isAuthenticated()")
+    public String showUserSettingsPage(@AuthenticationPrincipal User user, Model model) {
         if(user == null) {
-            throw new NoSuchElementException();
+            throw new AccessDeniedException("권한이 없습니다");
         }
-
         model.addAttribute("user", user);
 
         return "user-settings";

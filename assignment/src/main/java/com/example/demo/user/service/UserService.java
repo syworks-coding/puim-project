@@ -34,7 +34,6 @@ public class UserService implements UserDetailsService {
         String encodedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
         user.setUsername(userCreateDTO.getUsername());
         user.setPassword(encodedPassword);
-        user.setAuthority("ROLE_USER");
 
         return userRepository.save(user);
     }

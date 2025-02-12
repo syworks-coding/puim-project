@@ -13,6 +13,7 @@
     <div>
         <form id="editPostForm" th:action="@{/posts/{postId}(postId=${postUpdateDTO.id})}" method="POST" th:object="${postUpdateDTO}">
             <input type="hidden" th:value="${user.username}" id="id">
+            <input type="hidden" th:field="${postUpdateDTO.userId}" id="userId">
             <input type="hidden" id="postId" th:field="${postUpdateDTO.id}">
             <h1 class="h3 mb-3 fw-normal">글 수정</h1>
             <div class="form-group">

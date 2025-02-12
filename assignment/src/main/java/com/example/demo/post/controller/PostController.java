@@ -12,19 +12,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.naming.AuthenticationException;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,11 +38,9 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     })
     @GetMapping(value = "/")
-    public String showPostList(@RequestParam(required = false) Integer page, HttpSession session, Model model) {
+    public String showPostList(@RequestParam(required = false) Integer page, @AuthenticationPrincipal User user, Model model) {
 
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        if(securityContext != null) {
-            User user = (User) securityContext.getAuthentication().getPrincipal();
+        if(user != null) {
             model.addAttribute("user", user);
         }
 
@@ -73,13 +66,10 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     })
     @GetMapping("/posts/{postId}")
-    public String showOnePost(@PathVariable long postId, Model model, HttpSession session) {
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-
+    public String showOnePost(@PathVariable long postId, Model model, @AuthenticationPrincipal User user) {
         PostViewDTO postViewDTO = postService.getPostViewDTO(postId);
 
-        if(securityContext != null) {
-            User user = (User) securityContext.getAuthentication().getPrincipal();
+        if(user != null) {
             model.addAttribute("user", user);
         }
 
@@ -98,11 +88,8 @@ public class PostController {
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
     @GetMapping(value = "/posts/add")
-    @RolesAllowed({"ADMIN", "USER"})
-    public String showAddPostPage(HttpSession session, Model model) {
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
-
+    @PreAuthorize("isAuthenticated()")
+    public String showAddPostPage(@AuthenticationPrincipal User user, Model model) {
         PostCreateDTO postCreateDTO = new PostCreateDTO();
 
         model.addAttribute("user", user);
@@ -122,17 +109,10 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
     })
     @PostMapping("/posts")
-    @RolesAllowed({"ADMIN", "USER"})
+    @PreAuthorize("isAuthenticated()")
     public String savePost(@ModelAttribute PostCreateDTO postCreateDTO,
                            RedirectAttributes redirectAttributes,
-                           HttpSession session) {
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
-
-        if(user == null) {
-            throw new NoSuchElementException();
-        }
-
+                           @AuthenticationPrincipal User user) {
         postCreateDTO.setUserId(user.getId());
         Post savedPost = postService.savePost(postCreateDTO);
         redirectAttributes.addFlashAttribute("message", "게시글이 등록되었습니다.");
@@ -152,14 +132,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     })
     @GetMapping(value = "/posts/{postId}/edit")
-    @PreAuthorize("hasRole('USER')")
-    public String showEditPost(@PathVariable long postId, Model model, HttpSession session) {
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        if(securityContext == null) {
-            throw new AccessDeniedException("권한이 없습니다");
-        }
-
-        User user = (User) securityContext.getAuthentication().getPrincipal();
+    @PreAuthorize("isAuthenticated()")
+    public String showEditPost(@PathVariable long postId, Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("user", user);
 
         Post findPost = postService.findById(postId);
@@ -191,10 +165,16 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     })
     @PostMapping("/posts/{postId}")
-    @PreAuthorize("hasRole('USER') and #PostUpdateDTO.userId == authentication.id")
+    @PreAuthorize("isAuthenticated()")
     public String updatePost(@PathVariable long postId,
                              @ModelAttribute PostUpdateDTO postUpdateDTO,
-                             RedirectAttributes redirectAttributes) {
+                             RedirectAttributes redirectAttributes,
+                             @AuthenticationPrincipal User user) {
+
+        if(user.getId() != postUpdateDTO.getUserId()) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
         postService.updatePost(postId, postUpdateDTO);
 
         redirectAttributes.addFlashAttribute("message", "게시글이 수정되었습니다.");
@@ -213,11 +193,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     })
     @GetMapping("/posts/{postId}/delete")
-    @PreAuthorize("hasRole('USER')")
-    public String deletePost(@PathVariable long postId, HttpSession session)  {
-
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
+    @PreAuthorize("isAuthenticated()")
+    public String deletePost(@PathVariable long postId, @AuthenticationPrincipal User user)  {
 
         Post post = postService.findById(postId);
         if(post.getUser().getId() != user.getId()) {

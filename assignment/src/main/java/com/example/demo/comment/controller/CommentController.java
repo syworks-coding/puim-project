@@ -13,7 +13,9 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +38,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     })
     @GetMapping
-    public ResponseEntity<CommentResponseDTO> getComments(@PathVariable long postId, HttpSession session) {
+    public ResponseEntity<CommentResponseDTO> getComments(@PathVariable long postId) {
 
         CommentResponseDTO commentResponseDTO = commentService.findByPostId(postId);
         return ResponseEntity.ok(commentResponseDTO);
@@ -54,11 +56,12 @@ public class CommentController {
             @ApiResponse(responseCode = "403", description = "사용자 권한 없음 (로그인하지 않은 경우)")
     })
     @PostMapping
-    @RolesAllowed({"ADMIN", "USER"})
-    public ResponseEntity<Void> saveComment(@PathVariable long postId, @RequestBody CommentDTO commentDTO, HttpSession session) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> saveComment(@PathVariable long postId, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal User user) {
+        if(user == null) {
+            return ResponseEntity.badRequest().build();
+        }
 
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
         commentDTO.setUserId(user.getId());
         commentService.createComment(commentDTO);
 
@@ -76,8 +79,16 @@ public class CommentController {
             @ApiResponse(responseCode = "403", description = "권한 없음 (자신의 댓글이 아닌 경우)"),
     })
     @PatchMapping("/{commentId}")
-    @PreAuthorize("hasRole('USER') and #CommentDTO.userId == authentication.id")
-    public ResponseEntity<Void> updateComment(@PathVariable long postId, @PathVariable long commentId, @RequestBody CommentDTO commentDTO) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> updateComment(@PathVariable long postId,
+                                              @PathVariable long commentId,
+                                              @RequestBody CommentDTO commentDTO,
+                                              @AuthenticationPrincipal User user) {
+
+        Comment comment = commentService.findByCommentId(commentId);
+        if(user.getId() != comment.getUser().getId()) {
+            throw new AccessDeniedException("권한이 없습니다");
+        }
 
         commentService.updateComment(commentId, commentDTO);
         return ResponseEntity.ok().build();
@@ -95,14 +106,17 @@ public class CommentController {
             @ApiResponse(responseCode = "403", description = "권한 없음 (자신의 댓글이 아닌 경우)"),
     })
     @DeleteMapping("/{commentId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> deleteComment(@PathVariable long postId, @PathVariable long commentId, HttpSession session) throws AuthenticationException {
-        SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-        User user = (User) securityContext.getAuthentication().getPrincipal();
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteComment(@PathVariable long postId,
+                                              @PathVariable long commentId,
+                                              @AuthenticationPrincipal User user) {
+        if(user == null) {
+            return ResponseEntity.badRequest().build();
+        }
 
         Comment comment = commentService.findByCommentId(commentId);
         if(user.getId() != comment.getUser().getId()) {
-            throw new AuthenticationException();
+            return ResponseEntity.badRequest().build();
         }
 
         commentService.deleteCommentById(commentId);
