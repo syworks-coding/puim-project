@@ -12,18 +12,12 @@ import lombok.ToString;
 @ToString
 public class UserUpdateDTO {
 
-    @NotNull
-    @NotBlank
     @Size(min = 2, max = 16, message = "현재 비밀번호를 입력해주세요")
     private String oldPw;
 
-    @NotNull
-    @NotBlank
     @Size(min = 2, max = 16, message = "새 비밀번호를 입력해주세요")
     private String newPw;
 
-    @NotNull
-    @NotBlank
     @Size(min = 2, max = 16, message = "새 비밀번호 확인을 입력해주세요")
     private String newPwCheck;
 
