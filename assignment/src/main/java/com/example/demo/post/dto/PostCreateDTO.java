@@ -12,10 +12,10 @@ import lombok.*;
 // 저장용 DTO
 public class PostCreateDTO {
 
-    @Size(min = 1, max = 40, message = "제목을 입력해주세요.")
+    @Size(min = 1, max = 20, message = "제목을 입력해주세요.")
     private String title;
 
-    @Size(min = 10, max = 1500, message = "내용은 최소 10자 이상 작성해주세요.")
+    @Size(min = 1, max = 1500, message = "내용은 최소 10자 이상 작성해주세요.")
     private String content;
 
     private long userId;

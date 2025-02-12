@@ -277,6 +277,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        if (commentText.length > 200) {
+            alert("최대 200자 까지 작성 가능합니다.");
+            return;
+        }
+
         console.log("작성된 댓글:", commentText);
 
         const url = '/posts/' + postId + '/comments';  // POST 요청을 보낼 URL
@@ -311,6 +316,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function patchComment(postId, commentId, content) {
         if (content === "") {
             alert("댓글을 입력하세요!");
+            return;
+        }
+
+        if (commentText.length > 200) {
+            alert("최대 200자 까지 작성 가능합니다.");
             return;
         }
 
