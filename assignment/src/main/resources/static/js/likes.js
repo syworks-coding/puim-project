@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 likesCount.innerText = data.likeCount;
 
-                if (data.isLiked) {
+                if (data.liked) {
                     likesIcon.classList.remove('bi-heart');
                     likesIcon.classList.add('bi-heart-fill');
                 } else {
