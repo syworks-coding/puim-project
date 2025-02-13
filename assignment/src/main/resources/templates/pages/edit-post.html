@@ -25,6 +25,10 @@
                 <textarea class="form-control" id="content" rows="10" th:field="${postUpdateDTO.content}" ></textarea>
             </div>
 
+            <div class="text-end mb-3">
+                <span id="contentLength">0/000자</span>
+            </div>
+
             <div class="d-flex flex-row gap-3 align-items-center">
                 <button class="btn btn-primary w-100 py-2" type="submit">수정</button>
                 <button th:onclick="|window.location.href='http://localhost:8989/posts/' + ${postUpdateDTO.id}|" class="btn btn-secondary w-100 py-2" type="button">취소</button>

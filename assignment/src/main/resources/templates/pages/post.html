@@ -82,6 +82,9 @@
                 <div class="col-2 d-flex ">
                     <button class="btn btn-primary mt-2" id="submitComment">등록</button>
                 </div>
+                <div class="mb-3">
+                    <span id="commentLength">0/000자</span>
+                </div>
             </div>
         </div>
         <div th:if="${user == null}" class="mb-3">
@@ -185,6 +188,9 @@
                         <div class="col-2 d-flex ">
                             <button class="btn btn-primary mt-2 submitReply">등록</button>
                         </div>
+                        <div class="mb-3">
+                            <span class="replyLength">0/000자</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -202,6 +208,9 @@
             <div class="col-2 d-flex ">
                 <button class="btn btn-primary mt-2 editCommentBtn">수정</button>
                 <button class="btn btn-secondary mt-2 cancelEditBtn">취소</button>
+            </div>
+            <div class="mb-3">
+                <span class="editLength">0/000자</span>
             </div>
         </div>
     </div>

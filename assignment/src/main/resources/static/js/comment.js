@@ -2,13 +2,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 
+    const commentInputElement = document.getElementById("comment");
+    const commentLengthElement = document.getElementById("commentLength");
     const commentButton = document.getElementById("submitComment");
+
     const refreshButton = document.getElementById("refreshComment");
     const commentCountsElement = document.getElementById("commentsCount");
-    const commentListContainer = document.getElementById("commentListContainer");
 
     const postId = document.getElementById("postId").value;
-    const parentId = null;
+
+    const maxContentLength = 50;
 
     updateComments();
 
@@ -57,6 +60,16 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    function renderContentLength(inputElement, lengthElement, maxContentLength) {
+        const length = inputElement.value.length;
+        if(length >= maxContentLength) {
+            const origin = inputElement.value;
+            inputElement.value = origin.slice(inputElement.value, maxContentLength);
+        }
+
+        lengthElement.textContent = Math.min(length, maxContentLength) + '/' + maxContentLength + '자';
+    }
+
     function createCommentElement(comment, userId) {
         const template = document.getElementById('comment-template');
         const clone = template.content.cloneNode(true);
@@ -91,19 +104,24 @@ document.addEventListener("DOMContentLoaded", function () {
             editComment(comment);
         });
 
+        // 답글 글자수 인풋 바인딩
+        const replyElement = replyInputContainer.querySelector(".reply");
+        const replyLengthElement = replyInputContainer.querySelector(".replyLength");
+        replyElement.addEventListener("input", () => renderContentLength(replyElement, replyLengthElement, maxContentLength));
+
         // 답글 버튼 바인딩
         const replyBtn = clone.querySelector('.reply-btn');
         replyBtn.addEventListener('click', () => {
+            renderContentLength(replyElement, replyLengthElement, maxContentLength);
             replyButtonClicked(replyInputContainer);
         });
 
         // 답글 등록 버튼 바인딩
         const replySubmitButton = replyInputContainer.querySelector(".submitReply");
-        const commentElement = replyInputContainer.querySelector(".reply");
         replySubmitButton.addEventListener("click", () => {
-            const commentText = commentElement.value.trim();
-            postComment(postId, commentText, userId, comment.id, () => {
-                commentElement.value = "";
+            const commentText = replyElement.value.trim();
+            postComment(maxContentLength, postId, commentText, userId, comment.id, () => {
+                replyElement.value = "";
             });
         });
 
@@ -208,8 +226,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const editBtn = editElement.querySelector('.editCommentBtn');
         const editTextElement = editElement.querySelector('.editContent');
         editBtn.addEventListener("click", function() {
-            patchComment(postId, comment.id, editTextElement.value.trim());
+            patchComment(maxContentLength, postId, comment.id, editTextElement.value.trim());
         });
+
+        // 글자수
+        const editLengthElement = editElement.querySelector('.editLength');
+        renderContentLength(editTextElement, editLengthElement, maxContentLength);
+        editTextElement.addEventListener("input", () => renderContentLength(editTextElement, editLengthElement, maxContentLength));
 
         // 취소 버튼 바인딩
         const cancelEditBtn = editElement.querySelector('.cancelEditBtn');
@@ -242,8 +265,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 replySubmitButton.addEventListener("click", () => {
                     const userId = document.getElementById("userId").value;
                     const commentText = commentElement.value.trim();
-                    postComment(postId, commentText, userId, comment.id, () => {
+                    postComment(maxContentLength, postId, commentText, userId, comment.id, () => {
                         commentElement.value = "";
+
                     });
                 });
             }
@@ -321,25 +345,32 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    renderContentLength(commentInputElement, commentLengthElement, maxContentLength);
+
+    // 댓글 글자수 인풋 바인딩
+    commentInputElement.addEventListener("input",
+        () => renderContentLength(commentInputElement, commentLengthElement, maxContentLength));
+
     // 댓글 등록 버튼 클릭 바인딩
     commentButton.addEventListener("click", function () {
-        const commentText = document.getElementById("comment").value.trim();
+        const commentText = commentInputElement.value.trim();
         const userId = document.getElementById("userId").value;
 
-        postComment(postId, commentText, userId, null, () => {
+        postComment(maxContentLength, postId, commentText, userId, null, () => {
             document.getElementById("comment").value = "";
+            renderContentLength(commentInputElement, commentLengthElement, maxContentLength);
         });
     });
 
-    function postComment(postId, commentText, userId, parentId, onUpdate) {
+    function postComment(maxContentLength, postId, commentText, userId, parentId, onUpdate) {
 
         if (commentText === "") {
             alert("댓글을 입력하세요!");
             return;
         }
 
-        if (commentText.length > 50) {
-            alert("최대 50자 까지 작성 가능합니다.");
+        if (commentText.length > maxContentLength) {
+            alert("최대 " + maxContentLength + "자 까지 작성 가능합니다.");
             return;
         }
 
@@ -372,14 +403,14 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    function patchComment(postId, commentId, content) {
+    function patchComment(maxContentLength, postId, commentId, content) {
         if (content === "") {
             alert("댓글을 입력하세요!");
             return;
         }
 
-        if (content.length > 200) {
-            alert("최대 200자 까지 작성 가능합니다.");
+        if (content.length > maxContentLength) {
+            alert("최대 " + maxContentLength + "자 까지 작성 가능합니다.");
             return;
         }
 
