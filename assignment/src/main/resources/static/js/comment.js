@@ -235,18 +235,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 replyBtn.addEventListener('click', () => {
                     replyButtonClicked(commentDiv.querySelector('.replyInputContainer'));
                 });
-            }
 
-            // 답글 등록 버튼 바인딩
-            const replySubmitButton = commentDiv.querySelector(".submitReply");
-            const commentElement = commentDiv.querySelector(".reply");
-            replySubmitButton.addEventListener("click", () => {
-                const userId = document.getElementById("userId").value;
-                const commentText = commentElement.value.trim();
-                postComment(postId, commentText, userId, comment.id, () => {
-                    commentElement.value = "";
+                // 답글 등록 버튼 바인딩
+                const replySubmitButton = commentDiv.querySelector(".submitReply");
+                const commentElement = commentDiv.querySelector(".reply");
+                replySubmitButton.addEventListener("click", () => {
+                    const userId = document.getElementById("userId").value;
+                    const commentText = commentElement.value.trim();
+                    postComment(postId, commentText, userId, comment.id, () => {
+                        commentElement.value = "";
+                    });
                 });
-            });
+            }
 
             // 좋아요 버튼 바인딩
             const likesBtn = commentDiv.querySelector('.likes-btn');
