@@ -338,8 +338,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (commentText.length > 200) {
-            alert("최대 200자 까지 작성 가능합니다.");
+        if (commentText.length > 50) {
+            alert("최대 50자 까지 작성 가능합니다.");
             return;
         }
 

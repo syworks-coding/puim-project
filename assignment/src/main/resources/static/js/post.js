@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (contentText.length > 1500) {
-            alert("내용은 최대 1500자 까지 작성 가능합니다.");
+        if (contentText.length > 80) {
+            alert("내용은 최대 80자 까지 작성 가능합니다.");
             return;
         }
 

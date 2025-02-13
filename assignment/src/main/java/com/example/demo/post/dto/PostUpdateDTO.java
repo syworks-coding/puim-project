@@ -22,11 +22,11 @@ public class PostUpdateDTO {
     @NotNull
     private long userId;
 
-    @Schema(description = "게시물 제목", example = "Spring Boot 게시물 업데이트", minLength = 1, maxLength = 40)
-    @Size(min = 1, max = 40, message = "제목을 입력해주세요.")
+    @Schema(description = "게시물 제목", example = "Spring Boot 게시물 업데이트", minLength = 1, maxLength = 20)
+    @Size(min = 1, max = 20, message = "제목을 입력해주세요.")
     private String title;
 
-    @Schema(description = "게시물 내용", example = "게시물 내용을 업데이트하는 방법에 대해 설명합니다.", minLength = 10, maxLength = 1500)
-    @Size(min = 10, max = 1500, message = "내용은 최소 10자 이상 작성해주세요.")
+    @Schema(description = "게시물 내용", example = "게시물 내용을 업데이트하는 방법에 대해 설명합니다.", minLength = 10, maxLength = 80)
+    @Size(min = 10, max = 80, message = "내용은 최소 10자 이상 작성해주세요.")
     private String content;
 }

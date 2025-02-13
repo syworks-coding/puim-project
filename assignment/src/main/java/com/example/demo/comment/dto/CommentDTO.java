@@ -13,7 +13,7 @@ import lombok.ToString;
 public class CommentDTO { // 댓글 작성용
 
     @Schema(description = "댓글 내용", example = "이것은 댓글 내용입니다.", required = true)
-    @Size(min = 1, max = 200, message = "내용을 입력해주세요.")
+    @Size(min = 1, max = 50, message = "내용을 입력해주세요.")
     private String content;
 
     @Schema(description = "댓글 작성자의 사용자 ID", example = "12345", required = true)
