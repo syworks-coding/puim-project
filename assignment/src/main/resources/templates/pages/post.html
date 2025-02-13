@@ -22,14 +22,20 @@
             <div class="row">
                 <div class="col-8 text-start">
                     <div class="mb-2">
-                        <small th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}">0000-00-00 00:00:00</small>
-                        <small th:if="${post.updatedAt != null && post.updatedAt.isAfter(post.createdAt)}" th:text="' / ' + ${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm:ss')} + ' 수정'"></small>
+                        <small th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}">0000-00-00
+                            00:00:00</small>
+                        <small th:if="${post.updatedAt != null && post.updatedAt.isAfter(post.createdAt)}"
+                               th:text="' / ' + ${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm:ss')} + ' 수정'"></small>
                     </div>
                     <h4 class="h5 mb-3 fw-normal" th:text="${post.title}">게시물 제목입니다.</h4>
                 </div>
                 <div class="col-4 mb-3 text-end" th:if="${user != null && post.userId == user.id}">
-                    <button th:onclick="|location.href='/posts/${post.id}/edit'|" type="button" class="btn btn-link">수정</button>
-                    <button th:onclick="|location.href='/posts/${post.id}/delete'|" type="button" class="btn btn-link">삭제</button>
+                    <button th:onclick="|location.href='/posts/${post.id}/edit'|" type="button" class="btn btn-link">
+                        수정
+                    </button>
+                    <button th:onclick="|location.href='/posts/${post.id}/delete'|" type="button" class="btn btn-link">
+                        삭제
+                    </button>
                 </div>
             </div>
         </div>
@@ -84,6 +90,58 @@
 
         <div id="commentListContainer"></div>
 
+    </div>
+
+    <div th:if="${temp != null}" class="dummy">
+        <div>
+            <div class="card p-2 mb-2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8 text-start">
+                            <div>
+                                <small class="createdAt">2025-02-13 10:47:11</small>
+                                <small class="updatedAt"></small>
+                            </div>
+                            <b class="username">닉네임</b>
+                        </div>
+                        <div class="col-4 text-end commentEdit">
+                            <button type="button" class="btn btn-link edit-btn">수정</button>
+                            <button type="button" class="btn btn-link delete-btn">삭제</button>
+                        </div>
+                    </div>
+                    <p class="card-text content">댓글 내용</p>
+                    <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
+                    <span style="width: 20px;"></span>
+                    <button class="btn btn-sm btn-primary">
+                        <i class="bi bi-heart"></i>
+                        <span th:text="${dummy}">99</span>
+                    </button>
+                </div>
+            </div>
+            <div class="ms-4 border-start ps-3">
+                <div class="card p-2 mb-2  reply-container">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8 text-start">
+                                <div>
+                                    <small class="createdAt">2025-02-13 10:47:11</small>
+                                    <small class="updatedAt"></small>
+                                </div>
+                                <b class="username">닉네임</b>
+                            </div>
+                            <div class="col-4 text-end replyEdit">
+                                <button type="button" class="btn btn-link edit-btn">수정</button>
+                                <button type="button" class="btn btn-link delete-btn">삭제</button>
+                            </div>
+                        </div>
+                        <p class="card-text content">대댓글 내용</p>
+                        <button class="btn btn-sm btn-primary">
+                            <i class="bi bi-heart"></i>
+                            <span th:text="${dummy}">99</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -92,41 +150,45 @@
 
 <template id="comment-template">
     <div class="comment-container">
-    <div class="card p-2 mb-2">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-8 text-start">
-                    <div>
-                        <small class="createdAt"></small>
-                        <small class="updatedAt"></small>
-                    </div>
-                    <b class="username"></b>
-                </div>
-                <div class="col-4 text-end commentEdit" hidden>
-                    <button type="button" class="btn btn-link edit-btn">수정</button>
-                    <button type="button" class="btn btn-link delete-btn">삭제</button>
-                </div>
-            </div>
-            <p class="card-text content"></p>
-            <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
-        </div>
-    </div>
-
-    <div class="replyInputContainer" hidden>
-        <div class="ms-4 border-start ps-3">
-            <div class="form-group mb-3">
-                <div class="reply-visibility"></div>
+        <div class="card p-2 mb-2">
+            <div class="card-body">
                 <div class="row">
-                    <div class="col-10">
-                        <textarea class="form-control reply" rows="3"></textarea>
+                    <div class="col-8 text-start">
+                        <div>
+                            <small class="createdAt"></small>
+                            <small class="updatedAt"></small>
+                        </div>
+                        <b class="username"></b>
                     </div>
-                    <div class="col-2 d-flex ">
-                        <button class="btn btn-primary mt-2 submitReply">등록</button>
+                    <div class="col-4 text-end commentEdit" hidden>
+                        <button type="button" class="btn btn-link edit-btn">수정</button>
+                        <button type="button" class="btn btn-link delete-btn">삭제</button>
+                    </div>
+                </div>
+                <p class="card-text content"></p>
+                <button class="btn btn-sm btn-outline-primary reply-btn">답글</button>
+                <button class="btn btn-sm btn-primary likes-btn">
+                    <i class="bi likesIcon"></i>
+                    <span class="comment-likes">99</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="replyInputContainer" hidden>
+            <div class="ms-4 border-start ps-3">
+                <div class="form-group mb-3">
+                    <div class="reply-visibility"></div>
+                    <div class="row">
+                        <div class="col-10">
+                            <textarea class="form-control reply" rows="3"></textarea>
+                        </div>
+                        <div class="col-2 d-flex ">
+                            <button class="btn btn-primary mt-2 submitReply">등록</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </template>
 
@@ -139,7 +201,7 @@
             </div>
             <div class="col-2 d-flex ">
                 <button class="btn btn-primary mt-2 editCommentBtn">수정</button>
-                <button class="btn btn-secondary mt-2 cancelEditBtn" >취소</button>
+                <button class="btn btn-secondary mt-2 cancelEditBtn">취소</button>
             </div>
         </div>
     </div>
@@ -163,6 +225,10 @@
                     </div>
                 </div>
                 <p class="card-text content"></p>
+                <button class="btn btn-sm btn-primary likes-btn">
+                    <i class="bi likesIcon"></i>
+                    <span class="reply-likes">99</span>
+                </button>
             </div>
         </div>
     </div>

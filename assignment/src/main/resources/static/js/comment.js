@@ -68,11 +68,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         clone.querySelector('.username').textContent = comment.username;
         clone.querySelector('.content').textContent = comment.content;
+        clone.querySelector('.comment-likes').textContent = comment.likes;
 
         clone.querySelector('.createdAt').textContent = comment.createdAt;
         if(comment.updatedAt != null && new Date(comment.createdAt) < new Date(comment.updatedAt)) {
             clone.querySelector('.updatedAt').textContent = ' / ' + comment.updatedAt + ' 수정';
         }
+
+        const likesClass = comment.liked === true? 'bi-heart-fill' : 'bi-heart';
+        clone.querySelector(".likesIcon").classList.add(likesClass);
 
         // 삭제 버튼 바인딩
         const deleteBtn = clone.querySelector('.delete-btn');
@@ -93,6 +97,12 @@ document.addEventListener("DOMContentLoaded", function () {
             replyButtonClicked(replyInputContainer, comment.id);
         });
 
+        // 좋아요 버튼 바인딩
+        const likesBtn = clone.querySelector('.likes-btn');
+        likesBtn.addEventListener('click', () => {
+            likesComment(comment.id);
+        });
+
         clone.querySelector(".commentEdit").hidden = comment.userId !== userId;
 
         return clone;
@@ -105,11 +115,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         clone.querySelector('.username').textContent = reply.username;
         clone.querySelector('.content').textContent = reply.content;
-        clone.querySelector('.createdAt').textContent = reply.createdAt;
+        clone.querySelector('.reply-likes').textContent = reply.likes;
 
+        clone.querySelector('.createdAt').textContent = reply.createdAt;
         if(reply.updatedAt != null && new Date(reply.createdAt) < new Date(reply.updatedAt)) {
             clone.querySelector('.updatedAt').textContent = ' / ' + reply.updatedAt + ' 수정';
         }
+
+        const likesClass = reply.liked === true? 'bi-heart-fill' : 'bi-heart';
+        clone.querySelector(".likesIcon").classList.add(likesClass);
 
         const replyContainer = clone.querySelector('.reply-container');
         replyContainer.id = `comment-${reply.id}`;
@@ -126,6 +140,12 @@ document.addEventListener("DOMContentLoaded", function () {
         editBtn.setAttribute('data-comment-id', reply.id);
         editBtn.addEventListener('click', () => {
             editComment(reply);
+        });
+
+        // 좋아요 버튼 바인딩
+        const likesBtn = clone.querySelector('.likes-btn');
+        likesBtn.addEventListener('click', () => {
+            likesComment(reply.id);
         });
 
         clone.querySelector(".replyEdit").hidden = reply.userId !== userId;
@@ -206,6 +226,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     replyButtonClicked(commentDiv.querySelector('.replyInputContainer'), comment.id);
                 });
             }
+
+            // 좋아요 버튼 바인딩
+            const likesBtn = commentDiv.querySelector('.likes-btn');
+            likesBtn.addEventListener('click', () => {
+                likesComment(comment.id);
+            });
         });
 
         commentDiv.appendChild(editElement);
@@ -253,6 +279,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 commentElement.value = "";
             });
         }
+    }
+
+    // 좋아요 버튼 클릭 이벤트
+    function likesComment(commentId) {
+        if (commentButton == null) {
+            alert('회원 전용 기능입니다.');
+            return;
+        }
+
+        const url = '/comments/' + commentId + '/likes';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
+
+                updateComments();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 
     // 비로그인회원

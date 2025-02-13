@@ -91,7 +91,6 @@ public class PostService {
     public PostViewDTO getPostViewDTO(long postId) {
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 게시글 입니다."));
-        List<CommentViewDTO> commentViewDTOS = commentService.findCommentViewDTOS(postId);
 
         PostViewDTO postViewDTO = new PostViewDTO();
 
@@ -102,7 +101,6 @@ public class PostService {
         postViewDTO.setUpdatedAt(post.getUpdatedAt());
         postViewDTO.setUserId(post.getUser().getId());
         postViewDTO.setUsername(post.getUser().getUsername());
-        postViewDTO.setComments(commentViewDTOS);
 
         return postViewDTO;
     }

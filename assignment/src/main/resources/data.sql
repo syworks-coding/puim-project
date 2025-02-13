@@ -87,3 +87,18 @@ INSERT INTO likes (post_id, user_id) VALUES (3, 4);
 INSERT INTO likes (post_id, user_id) VALUES (5, 4);
 INSERT INTO likes (post_id, user_id) VALUES (6, 4);
 INSERT INTO likes (post_id, user_id) VALUES (7, 4);
+
+-- 홍길동이 댓글 1, 2, 3에 좋아요를 추가
+INSERT INTO likes (comment_id, user_id) VALUES (1, 2);
+INSERT INTO likes (comment_id, user_id) VALUES (2, 2);
+INSERT INTO likes (comment_id, user_id) VALUES (3, 2);
+
+-- 김철수가 댓글 2, 4, 5에 좋아요를 추가
+INSERT INTO likes (comment_id, user_id) VALUES (2, 3);
+INSERT INTO likes (comment_id, user_id) VALUES (4, 3);
+INSERT INTO likes (comment_id, user_id) VALUES (5, 3);
+
+-- 이영희가 댓글 1, 2, 3에 좋아요를 추가
+INSERT INTO likes (comment_id, user_id) VALUES (1, 4);
+INSERT INTO likes (comment_id, user_id) VALUES (2, 4);
+INSERT INTO likes (comment_id, user_id) VALUES (3, 4);

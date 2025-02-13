@@ -26,6 +26,4 @@ public class PostViewDTO {
 
     private String username;
     private long userId;
-
-    private List<CommentViewDTO> comments = new ArrayList<>();
 }

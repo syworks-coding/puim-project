@@ -6,6 +6,8 @@ import com.example.demo.comment.dto.CommentResponseDTO;
 import com.example.demo.comment.dto.CommentViewDTO;
 import com.example.demo.comment.model.Comment;
 import com.example.demo.comment.repository.CommentRepository;
+import com.example.demo.likes.model.Likes;
+import com.example.demo.likes.repository.LikesRepository;
 import com.example.demo.mapper.CommentMapper;
 import com.example.demo.post.model.Post;
 import com.example.demo.post.repository.PostRepository;
@@ -27,6 +29,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final LikesRepository likesRepository;
 
     @Transactional
     public Comment createComment(CommentDTO commentDTO) {
@@ -52,23 +55,23 @@ public class CommentService {
         return commentRepository.findById(commentId).orElseThrow();
     }
 
-    public CommentResponseDTO findByPostId(long postId) {
+    public CommentResponseDTO findByPostId(long postId, Long userId) {
         int totalCount = commentRepository.countByPostId(postId);
 
         CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
-        commentResponseDTO.setComments(findCommentViewDTOS(postId));
+        commentResponseDTO.setComments(findCommentViewDTOS(postId, userId));
         commentResponseDTO.setTotalCount(totalCount);
 
         return commentResponseDTO;
     }
 
-    public List<CommentViewDTO> findCommentViewDTOS(long postId) {
+    public List<CommentViewDTO> findCommentViewDTOS(long postId, Long userId) {
         List<CommentViewDTO> comments = new ArrayList<>();
 
         List<CommentQueryDTO> parentComments = commentMapper.findParentCommentsByPostId(postId);
 
         for (CommentQueryDTO parent : parentComments) {
-            CommentViewDTO commentViewDTO = commentQueryDTOToCommentViewDTO(parent);
+            CommentViewDTO commentViewDTO = commentQueryDTOToCommentViewDTO(parent, userId);
 
             commentViewDTO.setReplies(null);
 
@@ -76,7 +79,7 @@ public class CommentService {
             List<CommentViewDTO> convertedChildComments = new ArrayList<>();
 
             for (CommentQueryDTO childComment : childComments) {
-                CommentViewDTO converted = commentQueryDTOToCommentViewDTO(childComment);
+                CommentViewDTO converted = commentQueryDTOToCommentViewDTO(childComment, userId);
                 convertedChildComments.add(converted);
             }
             commentViewDTO.setReplies(convertedChildComments);
@@ -85,7 +88,7 @@ public class CommentService {
         return comments;
     }
 
-    private CommentViewDTO commentQueryDTOToCommentViewDTO(CommentQueryDTO commentQueryDTO) {
+    private CommentViewDTO commentQueryDTOToCommentViewDTO(CommentQueryDTO commentQueryDTO, Long userId) {
         CommentViewDTO commentViewDTO = new CommentViewDTO();
         commentViewDTO.setId(commentQueryDTO.getId());
         commentViewDTO.setUserId(commentQueryDTO.getUserId());
@@ -94,6 +97,15 @@ public class CommentService {
         commentViewDTO.setContent(commentQueryDTO.getContent());
         commentViewDTO.setCreatedAt(commentQueryDTO.getCreatedAt());
         commentViewDTO.setUpdatedAt(commentQueryDTO.getUpdatedAt());
+        commentViewDTO.setLikes(commentQueryDTO.getLikes());
+
+        if(userId != null) {
+            Likes likes = likesRepository.findByCommentIdAndUserId(commentQueryDTO.getId(), userId).orElse(null);
+            if(likes != null) {
+                commentViewDTO.setLiked(true);
+            }
+        }
+
         return commentViewDTO;
     }
 

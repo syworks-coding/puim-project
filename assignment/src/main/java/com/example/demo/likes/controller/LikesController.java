@@ -75,4 +75,27 @@ public class LikesController {
 
         return ResponseEntity.ok().build();
     }
+
+    @Operation(
+            summary = "댓글 좋아요 토글",
+            description = "사용자가 댓글에 좋아요를 추가하거나 취소합니다. 로그인한 사용자만 접근할 수 있습니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "좋아요 상태가 성공적으로 변경됨"),
+            @ApiResponse(responseCode = "400", description = "사용자가 로그인되지 않았거나 요청이 잘못됨"),
+            @ApiResponse(responseCode = "403", description = "권한 없음")
+    })
+    @PostMapping("/comments/{commentId}/likes")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> CommentToggleLikes(@AuthenticationPrincipal User user, @PathVariable long commentId) {
+
+        if(user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        likesService.commentToggleLikes(commentId, user.getId());
+
+        return ResponseEntity.ok().build();
+    }
 }

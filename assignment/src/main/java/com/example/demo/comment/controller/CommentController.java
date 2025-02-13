@@ -38,9 +38,15 @@ public class CommentController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     })
     @GetMapping
-    public ResponseEntity<CommentResponseDTO> getComments(@PathVariable long postId) {
+    public ResponseEntity<CommentResponseDTO> getComments(@PathVariable long postId,
+                                                          @AuthenticationPrincipal User user) {
 
-        CommentResponseDTO commentResponseDTO = commentService.findByPostId(postId);
+        Long userId = null;
+        if(user != null) {
+            userId = user.getId();
+        }
+
+        CommentResponseDTO commentResponseDTO = commentService.findByPostId(postId, userId);
         return ResponseEntity.ok(commentResponseDTO);
     }
 

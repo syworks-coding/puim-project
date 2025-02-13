@@ -17,4 +17,5 @@ public class CommentQueryDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private boolean isDeleted = false;
+    private long likes;
 }

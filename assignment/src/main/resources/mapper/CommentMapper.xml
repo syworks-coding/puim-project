@@ -5,16 +5,22 @@
 
     <!-- 부모 댓글 조회 -->
     <select id="findParentCommentsByPostId" resultType="com.example.demo.comment.dto.CommentQueryDTO">
-        SELECT c.*, u.username, u.id AS userId
+        SELECT c.*, u.username, u.id AS userId,
+               (SELECT COUNT(DISTINCT l.id)
+                FROM likes l
+                WHERE l.comment_id = c.id) AS likes
         FROM comment c
         LEFT JOIN users u ON c.user_id = u.id
         WHERE c.post_id = #{postId} AND c.parent_id IS NULL
-        ORDER BY c.created_at DESC
+        ORDER BY c.created_at DESC;
     </select>
 
     <!-- 대댓글 조회 -->
     <select id="findRepliesByParentId" resultType="com.example.demo.comment.dto.CommentQueryDTO">
-        SELECT c.*, u.username, u.id AS userId
+        SELECT c.*, u.username, u.id AS userId,
+               (SELECT COUNT(DISTINCT l.id)
+                FROM likes l
+                WHERE l.comment_id = c.id) AS likes
         FROM comment c
         LEFT JOIN users u ON c.user_id = u.id
         WHERE c.parent_id = #{parentId}
