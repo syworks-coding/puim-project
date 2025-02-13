@@ -131,9 +131,10 @@ public class CommentService {
         List<CommentQueryDTO> childComments = commentMapper.findRepliesByParentId(id);
 
         for (CommentQueryDTO childComment : childComments) {
+            likesRepository.deleteByCommentId(childComment.getId());
             commentRepository.deleteById(childComment.getId());
         }
-
+        likesRepository.deleteByCommentId(id);
         commentRepository.deleteById(id);
     }
 
