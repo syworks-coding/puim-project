@@ -94,7 +94,17 @@ document.addEventListener("DOMContentLoaded", function () {
         // 답글 버튼 바인딩
         const replyBtn = clone.querySelector('.reply-btn');
         replyBtn.addEventListener('click', () => {
-            replyButtonClicked(replyInputContainer, comment.id);
+            replyButtonClicked(replyInputContainer);
+        });
+
+        // 답글 등록 버튼 바인딩
+        const replySubmitButton = replyInputContainer.querySelector(".submitReply");
+        const commentElement = replyInputContainer.querySelector(".reply");
+        replySubmitButton.addEventListener("click", () => {
+            const commentText = commentElement.value.trim();
+            postComment(postId, commentText, userId, comment.id, () => {
+                commentElement.value = "";
+            });
         });
 
         // 좋아요 버튼 바인딩
@@ -223,9 +233,20 @@ document.addEventListener("DOMContentLoaded", function () {
             const replyBtn = commentDiv.querySelector('.reply-btn');
             if(replyBtn != null) {
                 replyBtn.addEventListener('click', () => {
-                    replyButtonClicked(commentDiv.querySelector('.replyInputContainer'), comment.id);
+                    replyButtonClicked(commentDiv.querySelector('.replyInputContainer'));
                 });
             }
+
+            // 답글 등록 버튼 바인딩
+            const replySubmitButton = commentDiv.querySelector(".submitReply");
+            const commentElement = commentDiv.querySelector(".reply");
+            replySubmitButton.addEventListener("click", () => {
+                const userId = document.getElementById("userId").value;
+                const commentText = commentElement.value.trim();
+                postComment(postId, commentText, userId, comment.id, () => {
+                    commentElement.value = "";
+                });
+            });
 
             // 좋아요 버튼 바인딩
             const likesBtn = commentDiv.querySelector('.likes-btn');
@@ -248,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 답글 버튼 클릭 이벤트
-    function replyButtonClicked(replyContainer, commentId) {
+    function replyButtonClicked(replyContainer) {
 
         if (commentButton == null) {
             alert('회원 전용 기능입니다;');
@@ -256,29 +277,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const isVisible = replyContainer.hidden === false;
-        const commentElement = replyContainer.querySelector(".reply");
 
         // 이미 답글 폼 열려잇으면 닫음
         if (isVisible) {
+            replyContainer.querySelector(".reply").value = "";
             replyContainer.hidden = true;
-            replySubmitButton.removeEventListener("click", handleSubmit);
             return;
         }
 
         replyContainer.hidden = false;
-
-        // 답글 등록 버튼 바인딩
-        const userId = document.getElementById("userId").value;
-        const replySubmitButton = replyContainer.querySelector(".submitReply");
-
-        replySubmitButton.addEventListener("click", handleSubmit);
-
-        function handleSubmit() {
-            const commentText = commentElement.value.trim();
-            postComment(postId, commentText, userId, commentId, () => {
-                commentElement.value = "";
-            });
-        }
     }
 
     // 좋아요 버튼 클릭 이벤트
@@ -335,8 +342,6 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("최대 200자 까지 작성 가능합니다.");
             return;
         }
-
-        console.log("작성된 댓글:", commentText);
 
         const url = '/posts/' + postId + '/comments';  // POST 요청을 보낼 URL
         const data = {
