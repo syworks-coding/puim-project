@@ -77,6 +77,34 @@ public class LikesController {
     }
 
     @Operation(
+            summary = "댓글 좋아요 정보 조회",
+            description = "주어진 댓글의 좋아요 수와 사용자가 좋아요를 눌렀는지 여부를 조회합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")  // 인증 설정
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "좋아요 정보 조회 성공"),
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "댓글을 찾을 수 없음")
+    })
+    @GetMapping("/comments/{commentId}/likes")
+    public ResponseEntity<LikesResponseDTO> getCommentLikeInfo(@AuthenticationPrincipal User user, @PathVariable long commentId) {
+
+        int likeCount = likesService.getCommentLikesCount(commentId);
+        boolean isLiked = false;
+
+        if(user != null) {
+            long userId = user.getId();
+            isLiked = likesService.getCommentIsLiked(commentId, userId);
+        }
+
+        LikesResponseDTO likesResponseDTO = new LikesResponseDTO();
+        likesResponseDTO.setLikeCount(likeCount);
+        likesResponseDTO.setLiked(isLiked);
+
+        return ResponseEntity.ok(likesResponseDTO);
+    }
+
+    @Operation(
             summary = "댓글 좋아요 토글",
             description = "사용자가 댓글에 좋아요를 추가하거나 취소합니다. 로그인한 사용자만 접근할 수 있습니다.",
             security = @SecurityRequirement(name = "bearerAuth")

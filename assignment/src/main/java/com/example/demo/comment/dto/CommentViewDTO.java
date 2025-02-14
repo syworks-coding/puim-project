@@ -1,7 +1,6 @@
 package com.example.demo.comment.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +45,4 @@ public class CommentViewDTO {
 
     @Schema(description = "댓글에 달린 좋아요 개수", example = "99")
     private Long likes;
-
-    @Schema(description = "댓글에 좋아요 눌렀는지 여부", example = "false")
-    private boolean isLiked = false;
 }

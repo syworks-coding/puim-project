@@ -34,6 +34,16 @@ public class LikesService {
         return likesRepository.findByPostIdAndUserId(postId, userId).isPresent();
     }
 
+    public Integer getCommentLikesCount(long commentId) {
+
+        return likesRepository.countByCommentId(commentId);
+    }
+
+    public boolean getCommentIsLiked(long commentId, long userId) {
+
+        return likesRepository.findByCommentIdAndUserId(commentId, userId).isPresent();
+    }
+
     @Transactional
     public void deleteByUserId(long userId) {
         List<Likes> byUserId = likesRepository.findByUserId(userId);

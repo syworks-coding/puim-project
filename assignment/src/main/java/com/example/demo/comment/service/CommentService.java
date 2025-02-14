@@ -98,14 +98,6 @@ public class CommentService {
         commentViewDTO.setCreatedAt(commentQueryDTO.getCreatedAt());
         commentViewDTO.setUpdatedAt(commentQueryDTO.getUpdatedAt());
         commentViewDTO.setLikes(commentQueryDTO.getLikes());
-
-        if(userId != null) {
-            Likes likes = likesRepository.findByCommentIdAndUserId(commentQueryDTO.getId(), userId).orElse(null);
-            if(likes != null) {
-                commentViewDTO.setLiked(true);
-            }
-        }
-
         return commentViewDTO;
     }
 

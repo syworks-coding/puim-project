@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateComments() {
         let userId = null;
-        if(commentButton != null) {
+        if (commentButton != null) {
             userId = Number(document.getElementById("userId").value);
         }
 
@@ -119,14 +119,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     const commentElement = createCommentElement(comment, userId);
                     commentContainer.appendChild(commentElement);
+                    initRenderLikes(commentContainer, comment.id)
 
                     comment.replies.forEach(reply => {
 
                         const replyElement = createReplyElement(commentContainer, reply, userId);
+                        initRenderLikes(replyElement, reply.id);
                         commentContainer.appendChild(replyElement);
-
                     });
-
                     commentListContainer.appendChild(commentContainer);
                 });
             })
@@ -135,10 +135,39 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    function getLikes(commentId, onDataLoaded) {
+        fetch('/comments/' + commentId + '/likes')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('좋아요 조회 실패');
+                }
+                return response.json();
+            })
+            .then(data => {
+                onDataLoaded(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function initRenderLikes(clone, commentId) {
+        const likesCount = clone.querySelector('.comment-likes');
+        const likesIcon = clone.querySelector(".likesIcon");
+
+        getLikes(commentId, function (data) {
+            likesCount.innerText = data.likeCount;
+
+            likesIcon.classList.remove('bi-heart-fill', 'bi-heart');
+            const likesClass = data.liked === true ? 'bi-heart-fill' : 'bi-heart';
+            likesIcon.classList.add(likesClass);
+        });
+    }
+
     // 글자 수 표시 및 제한
     function renderContentLength(inputElement, lengthElement, maxContentLength) {
         const length = inputElement.value.length;
-        if(length >= maxContentLength) {
+        if (length >= maxContentLength) {
             const origin = inputElement.value;
             inputElement.value = origin.slice(inputElement.value, maxContentLength);
         }
@@ -191,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 좋아요 버튼 클릭 이벤트
-    function likesComment(commentId) {
+    function likesComment(commentId, onUpdate) {
         if (commentButton == null) {
             alert('회원 전용 기능입니다.');
             return;
@@ -211,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error('Request failed');
                 }
 
-                updateComments();
+                onUpdate();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -223,15 +252,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         clone.querySelector('.username').textContent = comment.username;
         clone.querySelector('.content').textContent = comment.content;
-        clone.querySelector('.comment-likes').textContent = comment.likes;
 
         clone.querySelector('.createdAt').textContent = comment.createdAt;
-        if(comment.updatedAt != null && new Date(comment.createdAt) < new Date(comment.updatedAt)) {
+        if (comment.updatedAt != null && new Date(comment.createdAt) < new Date(comment.updatedAt)) {
             clone.querySelector('.updatedAt').textContent = ' / ' + comment.updatedAt + ' 수정';
         }
-
-        const likesClass = comment.liked === true? 'bi-heart-fill' : 'bi-heart';
-        clone.querySelector(".likesIcon").classList.add(likesClass);
 
         // 삭제 버튼 바인딩
         const deleteBtn = clone.querySelector('.delete-btn');
@@ -247,8 +272,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 좋아요 버튼 바인딩
         const likesBtn = clone.querySelector('.likes-btn');
+        const likesCount = clone.querySelector('.comment-likes');
+        const likesIcon = clone.querySelector(".likesIcon");
+
         likesBtn.addEventListener('click', () => {
-            likesComment(comment.id);
+            likesComment(comment.id, () => getLikes(comment.id, function(data) {
+                likesCount.innerText = data.likeCount;
+
+                likesIcon.classList.remove('bi-heart-fill', 'bi-heart');
+                const likesClass = data.liked === true ? 'bi-heart-fill' : 'bi-heart';
+                likesIcon.classList.add(likesClass);
+            }));
         });
 
         clone.querySelector(".commentEdit").hidden = comment.userId !== userId;
@@ -325,7 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // 수정 버튼 바인딩
         const editBtn = editElement.querySelector('.editCommentBtn');
         const editTextElement = editElement.querySelector('.editContent');
-        editBtn.addEventListener("click", function() {
+        editBtn.addEventListener("click", function () {
             patchComment(maxContentLength, postId, comment.id, editTextElement.value.trim());
         });
 
@@ -336,7 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 취소 버튼 바인딩
         const cancelEditBtn = editElement.querySelector('.cancelEditBtn');
-        cancelEditBtn.addEventListener("click", function() {
+        cancelEditBtn.addEventListener("click", function () {
             commentDiv.innerHTML = commentHTML;
             const userId = Number(document.getElementById("userId").value);
 
@@ -344,7 +378,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // 답글 버튼 바인딩
             const replyBtn = commentDiv.querySelector('.reply-btn');
-            if(replyBtn != null) {
+            if (replyBtn != null) {
                 replyBtn.addEventListener('click', () => {
                     replyButtonClicked(commentDiv.querySelector('.replyInputContainer'));
                 });
