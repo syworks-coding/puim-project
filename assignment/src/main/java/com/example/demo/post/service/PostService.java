@@ -33,8 +33,17 @@ public class PostService {
 
     public PostListDTO getPostListDTO(int page, int postsPerPage) {
 
+        if(page < 0) {
+            throw new ResourceNotFoundException("검색 결과가 없습니다.");
+        }
+
         PostListDTO postListDTO = new PostListDTO();
         List<PostPreviewDTO> postPreviewDTOList = postMapper.findPostInfoById(postsPerPage, page * postsPerPage);
+
+        if(postPreviewDTOList.isEmpty()) {
+            throw new ResourceNotFoundException("검색 결과가 없습니다.");
+        }
+        
         postListDTO.setPosts(postPreviewDTOList);
 
         long totalCount = postRepository.count();
