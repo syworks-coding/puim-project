@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
     private final CommentService commentService;
     private final PostService postService;
     private final LikesService likesService;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public User saveUser(UserCreateDTO userCreateDTO) {
