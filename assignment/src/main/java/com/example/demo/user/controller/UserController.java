@@ -125,10 +125,13 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String editUser(@Validated @ModelAttribute UserUpdateDTO userUpdateDTO,
                            BindingResult bindingResult,
-                           @AuthenticationPrincipal User user) {
+                           @AuthenticationPrincipal User user,
+                           Model model) {
         if(user == null) {
             throw new AccessDeniedException("권한이 없습니다");
         }
+
+        model.addAttribute("user", user);
 
         // 비밀번호 확인 불일치
         if(!userService.equalsCurrent(user.getId(), userUpdateDTO.getOldPw())) {
